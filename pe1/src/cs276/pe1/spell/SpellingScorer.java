@@ -60,7 +60,7 @@ public class SpellingScorer {
 		
 		// load words file
 		File wordsFile = new File(argv.length == 2 ? argv[1]
-				: "/afs/ir/class/cs276/pe1-2009/spelltest.txt");
+				: "/afs/ir/class/cs276/pe1-2011/spelltest.txt");
 		if (!wordsFile.exists() || !wordsFile.canRead()) {
 			usage();
 		}

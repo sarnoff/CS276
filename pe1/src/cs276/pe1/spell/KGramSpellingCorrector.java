@@ -9,7 +9,7 @@ import cs276.util.StringUtils;
 public class KGramSpellingCorrector implements SpellingCorrector {
 	/** Initializes spelling corrector by indexing kgrams in words from a file */
 	public KGramSpellingCorrector() {
-        File path = new File("/afs/ir/class/cs276/pe1-2009/big.txt.gz");
+        File path = new File("/afs/ir/class/cs276/pe1-2011/big.txt.gz");
         for (String line : IOUtils.readLines(IOUtils.openFile(path))) {
             for (String word : StringUtils.tokenize(line)) {
             	// TODO do kgram indexing
