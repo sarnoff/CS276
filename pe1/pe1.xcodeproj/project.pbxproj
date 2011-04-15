@@ -37,6 +37,7 @@
 		7B4FDB05135813FF004DC179 /* run */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = run; sourceTree = "<group>"; };
 		7B4FDB0713581530004DC179 /* out */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = out; sourceTree = "<group>"; };
 		7B4FDB3413581E09004DC179 /* PE1 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = PE1; sourceTree = BUILT_PRODUCTS_DIR; };
+		7B4FDB3E13582DBD004DC179 /* buildAndRun */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = buildAndRun; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -145,6 +146,7 @@
 			children = (
 				7B4FDB0713581530004DC179 /* out */,
 				7B4FDB05135813FF004DC179 /* run */,
+				7B4FDB3E13582DBD004DC179 /* buildAndRun */,
 				7B4FDAF913580ADA004DC179 /* build.xml */,
 				7B4FDAE613580AD3004DC179 /* lib */,
 				7B4FDAEA13580AD3004DC179 /* src */,
@@ -209,7 +211,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = ./run;
+			shellScript = ./buildAndRun;
 		};
 /* End PBXShellScriptBuildPhase section */
 
