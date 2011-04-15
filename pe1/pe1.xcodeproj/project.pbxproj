@@ -1,0 +1,223 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXFileReference section */
+		7B4FDAE713580AD3004DC179 /* lucene-2.9.0-src.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = "lucene-2.9.0-src.zip"; sourceTree = "<group>"; };
+		7B4FDAE813580AD3004DC179 /* lucene-core-2.9.0.jar */ = {isa = PBXFileReference; lastKnownFileType = archive.jar; path = "lucene-core-2.9.0.jar"; sourceTree = "<group>"; };
+		7B4FDAE913580AD3004DC179 /* lukeall-0.9.9.jar */ = {isa = PBXFileReference; lastKnownFileType = archive.jar; path = "lukeall-0.9.9.jar"; sourceTree = "<group>"; };
+		7B4FDAEE13580AD3004DC179 /* IMDBIndexer.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = IMDBIndexer.java; sourceTree = "<group>"; };
+		7B4FDAEF13580AD3004DC179 /* IMDBParser.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = IMDBParser.java; sourceTree = "<group>"; };
+		7B4FDAF113580AD3004DC179 /* KGramSpellingCorrector.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = KGramSpellingCorrector.java; sourceTree = "<group>"; };
+		7B4FDAF213580AD3004DC179 /* SpellingCorrector.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = SpellingCorrector.java; sourceTree = "<group>"; };
+		7B4FDAF313580AD3004DC179 /* SpellingScorer.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = SpellingScorer.java; sourceTree = "<group>"; };
+		7B4FDAF513580AD3004DC179 /* Counter.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Counter.java; sourceTree = "<group>"; };
+		7B4FDAF613580AD3004DC179 /* Counters.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Counters.java; sourceTree = "<group>"; };
+		7B4FDAF713580AD3004DC179 /* IOUtils.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = IOUtils.java; sourceTree = "<group>"; };
+		7B4FDAF813580AD3004DC179 /* StringUtils.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = StringUtils.java; sourceTree = "<group>"; };
+		7B4FDAF913580ADA004DC179 /* build.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = build.xml; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		7B4FDAE613580AD3004DC179 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				7B4FDAE713580AD3004DC179 /* lucene-2.9.0-src.zip */,
+				7B4FDAE813580AD3004DC179 /* lucene-core-2.9.0.jar */,
+				7B4FDAE913580AD3004DC179 /* lukeall-0.9.9.jar */,
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
+		7B4FDAEA13580AD3004DC179 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				7B4FDAEB13580AD3004DC179 /* cs276 */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		7B4FDAEB13580AD3004DC179 /* cs276 */ = {
+			isa = PBXGroup;
+			children = (
+				7B4FDAEC13580AD3004DC179 /* pe1 */,
+				7B4FDAF413580AD3004DC179 /* util */,
+			);
+			path = cs276;
+			sourceTree = "<group>";
+		};
+		7B4FDAEC13580AD3004DC179 /* pe1 */ = {
+			isa = PBXGroup;
+			children = (
+				7B4FDAED13580AD3004DC179 /* lucene */,
+				7B4FDAF013580AD3004DC179 /* spell */,
+			);
+			path = pe1;
+			sourceTree = "<group>";
+		};
+		7B4FDAED13580AD3004DC179 /* lucene */ = {
+			isa = PBXGroup;
+			children = (
+				7B4FDAEE13580AD3004DC179 /* IMDBIndexer.java */,
+				7B4FDAEF13580AD3004DC179 /* IMDBParser.java */,
+			);
+			path = lucene;
+			sourceTree = "<group>";
+		};
+		7B4FDAF013580AD3004DC179 /* spell */ = {
+			isa = PBXGroup;
+			children = (
+				7B4FDAF113580AD3004DC179 /* KGramSpellingCorrector.java */,
+				7B4FDAF213580AD3004DC179 /* SpellingCorrector.java */,
+				7B4FDAF313580AD3004DC179 /* SpellingScorer.java */,
+			);
+			path = spell;
+			sourceTree = "<group>";
+		};
+		7B4FDAF413580AD3004DC179 /* util */ = {
+			isa = PBXGroup;
+			children = (
+				7B4FDAF513580AD3004DC179 /* Counter.java */,
+				7B4FDAF613580AD3004DC179 /* Counters.java */,
+				7B4FDAF713580AD3004DC179 /* IOUtils.java */,
+				7B4FDAF813580AD3004DC179 /* StringUtils.java */,
+			);
+			path = util;
+			sourceTree = "<group>";
+		};
+		7BFFEB7A13580A3B004FD01E = {
+			isa = PBXGroup;
+			children = (
+				7B4FDAF913580ADA004DC179 /* build.xml */,
+				7B4FDAE613580AD3004DC179 /* lib */,
+				7B4FDAEA13580AD3004DC179 /* src */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXLegacyTarget section */
+		7BFFEB8313580A73004FD01E /* PE1 */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "$(ACTION)";
+			buildConfigurationList = 7BFFEB8413580A73004FD01E /* Build configuration list for PBXLegacyTarget "PE1" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/ant;
+			dependencies = (
+			);
+			name = PE1;
+			passBuildSettingsInEnvironment = 1;
+			productName = PE1;
+		};
+/* End PBXLegacyTarget section */
+
+/* Begin PBXProject section */
+		7BFFEB7C13580A3B004FD01E /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 7BFFEB7F13580A3B004FD01E /* Build configuration list for PBXProject "pe1" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 7BFFEB7A13580A3B004FD01E;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				7BFFEB8313580A73004FD01E /* PE1 */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin XCBuildConfiguration section */
+		7BFFEB8113580A3B004FD01E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		7BFFEB8213580A3B004FD01E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		7BFFEB8513580A73004FD01E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				COPY_PHASE_STRIP = NO;
+				DEBUGGING_SYMBOLS = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		7BFFEB8613580A73004FD01E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		7BFFEB7F13580A3B004FD01E /* Build configuration list for PBXProject "pe1" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7BFFEB8113580A3B004FD01E /* Debug */,
+				7BFFEB8213580A3B004FD01E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7BFFEB8413580A73004FD01E /* Build configuration list for PBXLegacyTarget "PE1" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7BFFEB8513580A73004FD01E /* Debug */,
+				7BFFEB8613580A73004FD01E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 7BFFEB7C13580A3B004FD01E /* Project object */;
+}
