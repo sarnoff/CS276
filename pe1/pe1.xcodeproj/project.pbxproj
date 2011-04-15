@@ -20,6 +20,10 @@
 		7B4FDAF713580AD3004DC179 /* IOUtils.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = IOUtils.java; sourceTree = "<group>"; };
 		7B4FDAF813580AD3004DC179 /* StringUtils.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = StringUtils.java; sourceTree = "<group>"; };
 		7B4FDAF913580ADA004DC179 /* build.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = build.xml; sourceTree = "<group>"; };
+		7B4FDB03135813FF004DC179 /* big.txt.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; path = big.txt.gz; sourceTree = "<group>"; };
+		7B4FDB04135813FF004DC179 /* spelltest.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = spelltest.txt; sourceTree = "<group>"; };
+		7B4FDB05135813FF004DC179 /* run */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = run; sourceTree = "<group>"; };
+		7B4FDB0713581530004DC179 /* out */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = out; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -89,12 +93,24 @@
 			path = util;
 			sourceTree = "<group>";
 		};
+		7B4FDB02135813FF004DC179 /* datasources */ = {
+			isa = PBXGroup;
+			children = (
+				7B4FDB03135813FF004DC179 /* big.txt.gz */,
+				7B4FDB04135813FF004DC179 /* spelltest.txt */,
+			);
+			path = datasources;
+			sourceTree = "<group>";
+		};
 		7BFFEB7A13580A3B004FD01E = {
 			isa = PBXGroup;
 			children = (
+				7B4FDB0713581530004DC179 /* out */,
+				7B4FDB05135813FF004DC179 /* run */,
 				7B4FDAF913580ADA004DC179 /* build.xml */,
 				7B4FDAE613580AD3004DC179 /* lib */,
 				7B4FDAEA13580AD3004DC179 /* src */,
+				7B4FDB02135813FF004DC179 /* datasources */,
 			);
 			sourceTree = "<group>";
 		};
