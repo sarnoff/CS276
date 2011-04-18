@@ -30,45 +30,16 @@ public class KGramWithEditDistanceSpellingCorrector extends KGramSpellingCorrect
 		Counter<String> scoredCounter = jaccardScore(word);
         List<String> firstPass = scoredCounter.topK(WL);
         
-        
-        
         Counter<String>editDistance = editDistance(word,firstPass);
         
         
-        Counters.retainTop(scoredCounter,10);
+        Counters.retainTop(scoredCounter,WL);
         Counters.normalize(scoredCounter);
         Counters.normalize(editDistance);
         
         reciprocal(editDistance);
         Counters.multiplyInPlace(scoredCounter,editDistance);
         
-        return scoredCounter.topK(10);
-        
-        /*
-         Counters.retainTop(scoredCounter,WL);
-        reciprocal(scoredCounter);
-        Counters.divideInPlace(scoredCounter,editDistance);
-        
-        
-        if(!scoredCounter.topK(WL).get(0).equals(firstPass.get(0)))
-            System.out.println(word+"=>"+scoredCounter.topK(WL).get(0)+"\n"+scoredCounter+"\n\n");
-        
         return scoredCounter.topK(WL);
-         */
-        
-        
-        /*
-        double min = Counters.min(editDistance);
-        Set<String> minEdit = Counters.keysAt(editDistance,min);
-        
-        //if edit distance and jaccard agree
-        if(minEdit.contains(firstPass.get(0)))
-           return firstPass;
-        
-        //otherwise print out so I can look:
-        System.out.println(word+"\njaccard:"+firstPass+"\neditD:"+minEdit+"\n");
-           
-        return firstPass;
-         */
 	}
 }
