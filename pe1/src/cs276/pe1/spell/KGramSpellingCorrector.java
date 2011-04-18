@@ -13,7 +13,7 @@ import cs276.util.StringUtils;
 import cs276.util.Counter;
 
 public class KGramSpellingCorrector implements SpellingCorrector {
-    protected static int K = 4; //start with bigrams, then extend out
+    protected static int K = 2; //start with bigrams, then extend out
     protected static int SE = K-1;//3;//defines extra kgrams - default to k-1 for best performance?
     protected static int WL = 10;//returned Word List size
 	/** Initializes spelling corrector by indexing kgrams in words from a file */
