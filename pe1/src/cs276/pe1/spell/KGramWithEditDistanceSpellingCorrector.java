@@ -13,14 +13,14 @@ public class KGramWithEditDistanceSpellingCorrector extends KGramSpellingCorrect
 
 	public List<String> corrections(String word) {
 		List<String> firstPass = super.corrections(word);
-        //use a counter to keep track of and sort the top 10
+        //use a counter to keep track of distance
         Counter<String> editDistance = new Counter<String>();
         for(String s:firstPass)
             editDistance.incrementCount(s,StringUtils.levenshtein(word,s));
         
-        List<String> distances = editDistance.topK(10);
+        List<String> distances = editDistance.topK(WL);
+        //reverse since topK is sorted by largest edit distance
         Collections.reverse(distances);
-        
         return distances;
 	}
 }

@@ -13,8 +13,9 @@ import cs276.util.StringUtils;
 import cs276.util.Counter;
 
 public class KGramSpellingCorrector implements SpellingCorrector {
-    protected static int k = 2; //start with bigrams, then extend out
-    protected static int se = k-1;//3;//defines extra kgrams - default to k-1 for best performance?
+    protected static int K = 2; //start with bigrams, then extend out
+    protected static int SE = K-1;//3;//defines extra kgrams - default to k-1 for best performance?
+    protected static int WL = 10;//returned Word List size
 	/** Initializes spelling corrector by indexing kgrams in words from a file */
     protected Map<String,Set<String>> kgram;
 	public KGramSpellingCorrector() {
@@ -22,17 +23,17 @@ public class KGramSpellingCorrector implements SpellingCorrector {
         File path = new File("datasources/big.txt.gz");
         
         String extraKGram = "";
-        for(int i = 0; i < se; i++)
+        for(int i = 0; i < SE; i++)
             extraKGram += "$";
         
         kgram = new HashMap<String,Set<String>>();
         for (String line : IOUtils.readLines(IOUtils.openFile(path))) {
             for (String word : StringUtils.tokenize(line)) {
             	String key = extraKGram+word+extraKGram;//$ to signal beginning/end of word
-                if(key.length() <= k)
+                if(key.length() <= K)
                     addWord(key,word);
-                for(int i = 0;i<(key.length()-k+1);i++)
-                    addWord(key.substring(i,i+k),word);
+                for(int i = 0;i<(key.length()-K+1);i++)
+                    addWord(key.substring(i,i+K),word);
             }
         }
 	}
@@ -61,12 +62,12 @@ public class KGramSpellingCorrector implements SpellingCorrector {
 		Counter<String> wordCounts = new Counter<String>();
         
         String extraKGram = "";
-        for(int i = 0; i < se; i++)
+        for(int i = 0; i < SE; i++)
             extraKGram += "$";
         
         String key = extraKGram+word+extraKGram;
         Set<String> set;
-        if(key.length() <= k)
+        if(key.length() <= K)
         {
             if(kgram.containsKey(key))
             {
@@ -75,16 +76,15 @@ public class KGramSpellingCorrector implements SpellingCorrector {
                     wordCounts.incrementCount(w);
             }
         }
-        for(int i = 0;i<(key.length()-k+1);i++)
+        for(int i = 0;i<(key.length()-K+1);i++)
         {
-            if(kgram.containsKey(key.substring(i,i+k)))
+            if(kgram.containsKey(key.substring(i,i+K)))
             {
-                set = kgram.get(key.substring(i,i+k));
+                set = kgram.get(key.substring(i,i+K));
                 for(String w : set)
                     wordCounts.incrementCount(w);
             }
         }
-        //System.out.println(word+" "+wordCounts.topK(10));
-		return wordCounts.topK(10);//assignment said start with 10 output values
+		return wordCounts.topK(WL);
 	}
 }
