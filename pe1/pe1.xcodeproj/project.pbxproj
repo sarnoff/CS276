@@ -6,6 +6,10 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		7B4FDB40135BE094004DC179 /* KGramWithEditDistanceSpellingCorrector.java in Sources */ = {isa = PBXBuildFile; fileRef = 7B4FDB3F135BE094004DC179 /* KGramWithEditDistanceSpellingCorrector.java */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		7B4FDB3213581E09004DC179 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -38,6 +42,7 @@
 		7B4FDB0713581530004DC179 /* out */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = out; sourceTree = "<group>"; };
 		7B4FDB3413581E09004DC179 /* PE1 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = PE1; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B4FDB3E13582DBD004DC179 /* buildAndRun */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = buildAndRun; sourceTree = "<group>"; };
+		7B4FDB3F135BE094004DC179 /* KGramWithEditDistanceSpellingCorrector.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = KGramWithEditDistanceSpellingCorrector.java; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,6 +104,7 @@
 		7B4FDAF013580AD3004DC179 /* spell */ = {
 			isa = PBXGroup;
 			children = (
+				7B4FDB3F135BE094004DC179 /* KGramWithEditDistanceSpellingCorrector.java */,
 				7B4FDAF113580AD3004DC179 /* KGramSpellingCorrector.java */,
 				7B4FDAF213580AD3004DC179 /* SpellingCorrector.java */,
 				7B4FDAF313580AD3004DC179 /* SpellingScorer.java */,
@@ -220,6 +226,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7B4FDB40135BE094004DC179 /* KGramWithEditDistanceSpellingCorrector.java in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

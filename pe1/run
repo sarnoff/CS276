@@ -1,4 +1,4 @@
 #!/bin/sh
 
 #java -cp bin/:lib/lucene-core-2.4.1.jar cs276.pe1.$1.class $2 $3
-java -cp bin/:lib/lucene-core-2.4.1.jar cs276.pe1.spell.SpellingScorer cs276.pe1.spell.KGramSpellingCorrector datasources/spelltest.txt
+java -cp bin/:lib/lucene-core-2.4.1.jar cs276.pe1.spell.SpellingScorer cs276.pe1.spell.KGramWithEditDistanceSpellingCorrector datasources/spelltest.txt
