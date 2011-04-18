@@ -13,18 +13,22 @@ import cs276.util.StringUtils;
 import cs276.util.Counter;
 
 public class KGramSpellingCorrector implements SpellingCorrector {
-    private static int k = 2; //start with bigrams, then extend out
+    private static int k = 4; //start with bigrams, then extend out
+    private static int se = 3;
 	/** Initializes spelling corrector by indexing kgrams in words from a file */
     Map<String,Set<String>> kgram;
 	public KGramSpellingCorrector() {
         //File path = new File("/afs/ir/class/cs276/pe1-2011/big.txt.gz");
         File path = new File("datasources/big.txt.gz");
         
+        String extraKGram = "";
+        for(int i = 0; i < se; i++)
+            extraKGram += "$";
         
         kgram = new HashMap<String,Set<String>>();
         for (String line : IOUtils.readLines(IOUtils.openFile(path))) {
             for (String word : StringUtils.tokenize(line)) {
-            	String key = "$"+word+"$";//$ to signal beginning/end of word
+            	String key = extraKGram+word+extraKGram;//$ to signal beginning/end of word
                 if(key.length() <= k)
                     addWord(key,word);
                 for(int i = 0;i<(key.length()-k+1);i++)
@@ -55,7 +59,12 @@ public class KGramSpellingCorrector implements SpellingCorrector {
 
 	public List<String> corrections(String word) {
 		Counter<String> wordCounts = new Counter<String>();
-        String key = "$"+word+"$";//$ to signal beginning/end of word
+        
+        String extraKGram = "";
+        for(int i = 0; i < se; i++)
+            extraKGram += "$";
+        
+        String key = extraKGram+word+extraKGram;//$ to signal beginning/end of word
         Set<String> set;
         if(key.length() <= k)
         {
