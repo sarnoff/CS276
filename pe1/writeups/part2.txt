@@ -1,0 +1,47 @@
+2.1.1
+Searching for author "Rob" returned 408 results.  Lucene does not seem to rank search results in any way, so 
+I simply listed the first 20 results.
+
+2.1.2
+There were no results for "murdered" and "eighteen" within 5 words of each other. I did find Guilt Complex (2004)
+that had them within 7 words and Sommarmord (1994) that had them within 8 words, but nothing within 5.
+
+2.1.3
+Searching for simply "10 items or less \(2006\)", backslashes included because the () characters are Lucene terms,
+returned the correct movie at position 1, followed by variants in the next three positions:
+10 Items or Less (2006)
+"10 Items or Less" (2006) {Health Insurance (#1.3)}
+"10 Items or Less" (2006) {The New Boss (#1.1)}
+"10 Items or Less" (2006) {What Women Want (#1.4)}
+Followed by other lesser matches such as 9 Items or Less.  The key to this query is just to recognize that the
+() characters need to be escaped.
+
+2.2
+Simply doing Rob^1.5 Hart is not succeeding.  It is not anding terms properly; it returns 'Simon Hart' and 'rob'
+as authors.  
+
+Putting Rob^1.5 AND Hart returned nothing.
+
+Rob^1.5 AND Hart* returned 337 results.  But this is still not ideal.  We want everything that ends in Hart, with
+Rob Hart boosted.  Combine AND and OR?
+
+Combining the two.  I want either last name Hart, or first name Rob last name Hart, with the second boosted. In
+Lucene, this query is:
+Hart OR (Rob Hart)^1.5
+
+This was still ineffective, because I forgot to make the second query an AND.  I'll leave out wildcards for now
+and just search Hart OR (Rob AND Hart)^1.5
+
+Results were not encouraging. Adding wildcards like so:
+Hart OR (Rob* AND Hart*)^1.5
+
+I now get Robert Hartill appearing more, but it is still not boosted enough. Altering boost factors.
+Hart^.2 OR (Rob* AND Hart*)^5.5
+
+My top 9-20 are now Rob Hartill.  My top 8 are still not-Rob Hart.  Changing boosts again.
+Hart^0.01 OR (Rob* AND Hart*)^50
+
+Success! All my top results are now versions of Rob Hartill.  But my last names are different.  Making them match.
+(Hart*)^0.01 OR (Rob* AND Hart*)^50
+
+Top matches all still Rob Hartill.  Presumably if you are more sure of the last name, wildcards are unnecessary.
