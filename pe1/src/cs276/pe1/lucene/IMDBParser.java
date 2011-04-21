@@ -129,8 +129,8 @@ public class IMDBParser {
 	}
 	
 	/** Default path to imdb plot records */
-//	public static final File imdbPath = new File("/afs/ir/class/cs276/pe1-2009/imdb-plots-20081003.list.gz");
-	public static final File imdbPath = new File("C:/Users/Amanda/Desktop/Everything/Spring Quarter/CS276/pe1/datasources/imdb-plots-20081003.list.gz");
+	public static final File imdbPath = new File("\\\\afs\\userhome\\Desktop\\imdb-plots-20081003.list.gz");
+//	public static final File imdbPath = new File("C:/Users/Amanda/Desktop/Everything/Spring Quarter/CS276/pe1/datasources/imdb-plots-20081003.list.gz");
 	
 	/**
 	 * Sample main method prints records from the plots file.

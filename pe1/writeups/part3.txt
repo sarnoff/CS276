@@ -1,0 +1,9 @@
+Lucene found the following six movies with Timmy in the title:
+  Timmy (2006)
+  Timmy, the Bag Boy (2007)
+  "South Park" (1997) {Timmy 2000 (#4.3)}
+  Jimmy Timmy Power Hour, The (2004) (TV)
+  Secret of NIMH 2: Timmy to the Rescue, The (1998) (V)
+  Jimmy Timmy Power Hour 2: When Nerds Collide, The (2006) (TV)
+  
+Searching for "Trmmy" had no results.
