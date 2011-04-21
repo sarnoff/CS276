@@ -7,6 +7,7 @@
     <path id="cs276-pe1.classpath">
         <pathelement location="bin"/>
         <pathelement location="lib/lucene-core-2.9.0.jar"/>
+	<pathelement location="lib/lucene-spellchecker-2.3.2.jar"/>
     </path>
     <target name="init">
         <mkdir dir="bin"/>

@@ -1,0 +1,2 @@
+1)
+The output of the SpellingScorer is based on the degree of k chosen for the k-gram:

@@ -8,6 +8,12 @@ import cs276.util.Counter;
 import cs276.util.Counters;
 
 public class KGramWithEditDistanceSpellingCorrector extends KGramSpellingCorrector {
+    public enum ListCompare { 
+        BASIC, //from the jaccard top 10, finds the one with the smallest edit distance (and highest jaccard score)
+        TIEBREAKING, //uses word frequency to break ties
+        NORMALIZE //Normalizes then multiplies score and edit distance
+    };
+    protected static ListCompare correctionsType = ListCompare.BASIC;
 	public KGramWithEditDistanceSpellingCorrector() {
         super();
 	}
@@ -27,19 +33,43 @@ public class KGramWithEditDistanceSpellingCorrector extends KGramSpellingCorrect
 	}
     
 	public List<String> corrections(String word) {
-		Counter<String> scoredCounter = jaccardScore(word);
+        Counter<String> scoredCounter = jaccardScore(word);
         List<String> firstPass = scoredCounter.topK(WL);
         
-        Counter<String>editDistance = editDistance(word,firstPass);
+        if(correctionsType == ListCompare.BASIC||correctionsType == ListCompare.TIEBREAKING)
+        {
+            Counter<String> editDistance = editDistance(word,firstPass);
+            Set<String> minKeys = Counters.keysAt(editDistance,Counters.min(editDistance));
+            
+            Counter<String> smallestEDJaccard = new Counter<String>();
+            for(String s:minKeys)
+                smallestEDJaccard.incrementCount(s,scoredCounter.getCount(s));
+            if(correctionsType == ListCompare.TIEBREAKING)
+            {
+                Set<String> minKeys2 = Counters.keysAt(smallestEDJaccard,Counters.min(smallestEDJaccard));
+                if(minKeys2.size()>1)
+                {
+                    Counter<String> tie = new Counter<String>();
+                    for(String s:minKeys2)
+                        tie.incrementCount(s,freq.getCount(s));
+                    return tie.topK(WL);
+                }
+            }
+            return smallestEDJaccard.topK(WL);
+        }
+        else if(correctionsType == ListCompare.NORMALIZE)
+        {
+            Counter<String>editDistance = editDistance(word,firstPass);
         
+            Counters.retainTop(scoredCounter,WL);
+            Counters.normalize(scoredCounter);
+            Counters.normalize(editDistance);
         
-        Counters.retainTop(scoredCounter,WL);
-        Counters.normalize(scoredCounter);
-        Counters.normalize(editDistance);
+            reciprocal(editDistance);
+            Counters.multiplyInPlace(scoredCounter,editDistance);
         
-        reciprocal(editDistance);
-        Counters.multiplyInPlace(scoredCounter,editDistance);
-        
-        return scoredCounter.topK(WL);
+            return scoredCounter.topK(WL);
+        }
+        return firstPass;
 	}
 }

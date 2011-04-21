@@ -13,11 +13,12 @@ import cs276.util.StringUtils;
 import cs276.util.Counter;
 
 public class KGramSpellingCorrector implements SpellingCorrector {
-    protected static int K = 2; //start with bigrams, then extend out
+    protected static int K = 3; //start with bigrams, then extend out
     protected static int SE = K-1;//3;//defines extra kgrams - default to k-1 for best performance?
     protected static int WL = 10;//returned Word List size
 	/** Initializes spelling corrector by indexing kgrams in words from a file */
     protected Map<String,Set<String>> kgram;
+    protected Counter<String> freq;
 	public KGramSpellingCorrector() {
         //File path = new File("/afs/ir/class/cs276/pe1-2011/big.txt.gz");
         File path = new File("datasources/big.txt.gz");
@@ -27,8 +28,11 @@ public class KGramSpellingCorrector implements SpellingCorrector {
             extraKGram += "$";
         
         kgram = new HashMap<String,Set<String>>();
+        freq = new Counter<String>();
+        
         for (String line : IOUtils.readLines(IOUtils.openFile(path))) {
             for (String word : StringUtils.tokenize(line)) {
+                freq.incrementCount(word);
             	String key = extraKGram+word+extraKGram;//$ to signal beginning/end of word
                 if(key.length() <= K)
                     addWord(key,word);
