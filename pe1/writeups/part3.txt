@@ -7,3 +7,82 @@ Lucene found the following six movies with Timmy in the title:
   Jimmy Timmy Power Hour 2: When Nerds Collide, The (2006) (TV)
   
 Searching for "Trmmy" had no results.
+
+Lucene's SpellChecker class suggested the following words for "Trmmy" when indexed on title:
+jammy
+jimmy
+kimmy
+lemmy
+grammy
+
+The top twenty results using Trmmy and all the suggested Lucene spellings from the SpellChecker class was:
+  Eye Jammy (2006)
+  Grammy Living Legends (1989) (TV)
+  "Melrose Place" (1992) {Free Kimmy (#4.11)}
+  Jimmy (2008)
+  Alphaville, une étrange aventure de Lemmy Caution (1965)
+  Latin Grammy Celebra: Marco Antonio Solis (2007) (TV)
+  "Jimmy Stewart Show, The" (1971)
+  "Seinfeld" (1990) {The Jimmy (#6.18)}
+  Adventures of Jimmy Cliche, The (1995)
+  Affairs of Jimmy Valentine, The (1942)
+  Cowboy Jimmy (1957)
+  Dear Jimmy (2005)
+  For Jimmy Brown (2001)
+  Free Jimmy (2006)
+  Homecoming of Jimmy Whitecloud, The (2001)
+  Jimmy and Judy (2006)
+  Jimmy Blue (2006)
+  Jimmy Hollywood (1994)
+  Jimmy Show, The (2001)
+  Jimmy the Gent (1934)
+(None of these, coincidentally, are actually Timmy movies)
+
+The suggestions for Trmmy from our KGramWithEditDistance class were:
+jimmy
+dummy
+tommy
+army
+mummy
+clammy
+stormy
+infamy
+formally
+conformity
+KGramSpellingCorrector returned the same words, but in a different order.
+
+Poor results from IMDBSpelling:
+Jmmmy yielded these top results:
+  Jammed, The (2007)
+  "Director's Commentary" (2004)
+  Log Jammed (1959)
+  Dummy (2002)
+  Dummy (2005/I)
+  "Andromeda" (2000) {A Symmetry of Imperfection (#4.19)}
+  "Neighbours" (1985) {Symmetry for the Devil (#1.4977)}
+  Tommy (1975)
+  "What a Dummy" (1990)
+  Dummy Owner, The (1938)
+  Dummy, The (1995) (V)
+  Punching Dummy, The (2007)
+  Who's a Dummy? (1941)
+  "X Files, The" (1993) {Fearful Symmetry (#2.18)}
+  Jimmy (2008)
+  Mummy, The (1932)
+  Mummy, The (1959)
+  Mummy, The (1999)
+  Fighting Tommy Riley (2005)
+  Return of Tommy Tricker, The (1994)
+(Only one of which contained Jimmy)
+
+Good result:
+Concider yielded the following:
+  Being Considered (2000)
+  Cider House Rules, The (1999)
+  For Your Consideration (2006)
+  "Consider Your Verdict" (1961)
+  "Flavor of Love" (2006) {For Flav's Consideration (#1.9)}
+  "ALF" (1986) {Consider Me Gone (#4.24)}
+  Cider House Rules: The Making of an American Classic, The (1999) (V)
+  "Alfred Hitchcock Hour, The" (1962) {Consider Her Ways (#3.11)}
+  
