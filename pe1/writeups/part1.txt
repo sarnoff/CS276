@@ -1,2 +1,52 @@
 1)
 The output of the SpellingScorer is based on the degree of k chosen for the k-gram:
+K	Score (/270)
+1	9
+2	170
+3	176
+4	172
+5	172
+6	172
+
+Of note SE (the Spacing Entity) that give weight to the grams at the beginning and end of the word for these tests is K-1.  Which makes it so that the larger K's have more keys (not less) - meaning there is no divergence as K increases.
+
+This type of search is extremely susceptible to suggesting large, compound words as possible fits such as conceder - the top 2 corrections are cider and consider.  cider scored higher, since the beginning of the word ($c) is mismatched as opposed to the middle (nc and ci) - which makes conceder look like the better choice.
+
+2)
+The output of the SpellingScorer is based on the degree of k chosen for the k-gram when Levenshtein distance is taken into account:
+K	Score (/270)
+1	57
+2	203
+3	204
+4	198
+5	198
+6	198
+
+The way I implemented this initially was to take the topK from the jacquard scoring, then find the ones with the smallest edit distance.  I saw a slight increase, but not what I was expecting.  I realized that some that were right, were being corrected to incorrect values based on that face that I wasn't taking jacquard score into account after creating the topK list (if there were values with the same - lowest - edit distance, it chose them close to at random).  So after I went through the lists, I check for the multiple ties which one has the best jacquard score.
+
+3)
+So I decided that the best time to implement word frequency was as some form of tie breaker if jaccard and edit distance were the same.  This did much better than I did on the first round of two when I was only taking edit distance into account.  However, I fixed many of the collision issues when I used jacquard score as a tiebreaker if edit distance conflicted.  Adding the frequency as a tie breaker ended up making things worse which I'm mostly chalking up to the corpus and frequencies not being universally right.
+
+tiebreaking:
+K	Score (/270)
+1	57
+2	199
+3	196
+4	188
+5	188
+6	188
+
+Other notes)
+
+What I noticed with the methods in 2 and 3 is that there were a few times the the correct answer was still getting ignored since there was too much weight towards edit distance (which wasn't always right).  In those cases I noticed that even though the edit distance is off by one, the jacquard score is much higher than all the other values.  We want the jacquard score maxed and the edit distance mined.  I implemented some form of normalization within the counters of both the jaccard score and the edit distance.  I then multiplied the (normalized) jacquard score and the reciprocal of the edit distance to get a final ranking (which I maxed).  The testing went as such:
+
+With Normalization + multiplication:
+K	Score (/270)
+1	55
+2	207
+3	205
+4	199
+5	199
+6	199
+
+This did a little bit better and I think is more flexible (with more testing you can weight then normalized values to get better results).

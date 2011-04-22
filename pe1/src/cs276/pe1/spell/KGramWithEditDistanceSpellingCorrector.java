@@ -13,7 +13,9 @@ public class KGramWithEditDistanceSpellingCorrector extends KGramSpellingCorrect
         TIEBREAKING, //uses word frequency to break ties
         NORMALIZE //Normalizes then multiplies score and edit distance
     };
-    protected static ListCompare correctionsType = ListCompare.BASIC;
+    
+    //Change this to change the type of corrections returned
+    protected static ListCompare correctionsType = ListCompare.NORMALIZE;
 	public KGramWithEditDistanceSpellingCorrector() {
         super();
 	}
