@@ -21,4 +21,5 @@
 #
 # (you should test your code the same way)
 
+javac -g MessageParser.java NaiveBayesClassifier.java
 java -Xmx1000m NaiveBayesClassifier $1 train.gz
