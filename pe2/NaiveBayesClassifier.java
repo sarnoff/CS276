@@ -43,8 +43,6 @@ public class NaiveBayesClassifier {
       for(int i = 0; i < messageList.length;i++)
       {
           Counter<String> categoryCounter = new Counter<String>();
-          //prior not needed in training - can be gotten later
-          //double prior = categoryDocs/totalDocs;
           for(MessageFeatures mf:messageList[i])
           {
               //do the same thing for subject and body (for now)
@@ -78,15 +76,51 @@ public class NaiveBayesClassifier {
   }
     
     
-  private final static int MESSAGES_TO_CLASSIFY = 20;
-  public static void classifyBinomial(Map<String,double[]> messageList)
+    
+  public static void quickProbCheck( final double[] probability )
   {
+      double max = probability[0];
+      int maxI = 0;
+      for ( int i = 1; i < probability.length; i ++ )
+      {
+          if ( probability[i] > max)
+              maxI = i;
+      }
+      System.out.println( maxI );
+  }
+    
+    
+  private final static int MESSAGES_TO_CLASSIFY = 20;
+  public static void classifyBinomial(ArrayList<MessageFeatures>[] messageList, Map<String,double[]> model)
+  {
+      //setup
       int totalDocs = sizeOf(messageList);
+      double[] probs = new double[messageList.length];
+      
+      //classification
       for(int i = 0; i < messageList.length;i++)
       {
           for(int j = 0; j<MESSAGES_TO_CLASSIFY;j++)
           {
+              for(int k = 0; k < messageList.length; k++)
+                  probs[k]=Math.log((double)messageList[k].size()/totalDocs);
+              
               MessageFeatures mf = messageList[i].get(j);
+              Set<String>terms = new HashSet<String>();
+              terms.addAll(mf.subject.keySet());
+              terms.addAll(mf.body.keySet());
+              for(String term:terms)
+              {
+                  for(int k = 0; k < messageList.length;k++)
+                  {
+                      double count = mf.subject.getCount(term)+mf.body.getCount(term);
+                      if(model.containsKey(term))//it should
+                          probs[k]+=count*Math.log(model.get(term)[k]);
+                  }
+              }
+              
+              //quickProbCheck(probs);
+              outputProbability(probs);
           }
       }
   }
@@ -94,7 +128,7 @@ public class NaiveBayesClassifier {
   public static void doBinomial(MessageIterator mi) {
       ArrayList<MessageFeatures>[] messageList = parseIterator(mi);
       Map<String,double[]> freqs = trainBinomial(messageList);
-      
+      classifyBinomial(messageList, freqs);
   }
   
   public static void doBinomialChi2(MessageIterator mi) {
