@@ -1,8 +1,33 @@
+import java.util.*;
 
 public class NaiveBayesClassifier {
   
+  //All of these need multiple passes - making an array (indexed by category number) ]
+  //for ArrayLists (which contain MessageFeatures of that category)
+  public static ArrayList<MessageFeatures>[] parseIterator(MessageIterator mi)
+  {
+      ArrayList<MessageFeatures>[] messageList = (ArrayList<MessageFeatures>[])new ArrayList[mi.numNewsgroups];
+      for(int i = 0; i<mi.numNewsgroups;i++)
+          messageList[i] = new ArrayList<MessageFeatures>();
+      for(;;)
+      {
+          try
+          {
+              MessageFeatures mf = mi.getNextMessage();
+              messageList[mf.newsgroupNumber].add(mf);
+          }
+          catch(Exception e)
+          {
+              break;
+          }
+      }
+      return messageList;
+  }
+    
   public static void doBinomial(MessageIterator mi) {
-    // Your code here.
+      //
+      ArrayList<MessageFeatures>[] messageList = parseIterator(mi);
+      //System.out.println(messageList[0]);
   }
   
   public static void doBinomialChi2(MessageIterator mi) {
