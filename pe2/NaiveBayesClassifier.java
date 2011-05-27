@@ -72,60 +72,73 @@ public class NaiveBayesClassifier {
       return size;
   }
     
-  public static Map<String,double[]> trainBinomial(ArrayList<MessageFeatures>[] messageList)
-  {
-      int totalDocs = sizeOf(messageList);
-      //array index category, map of word and (smoothed) probability
-      Map<String,double[]> freqs = new HashMap<String,double[]>();
-      Set<String>vocabulary = new HashSet<String>();
-      Counter<String>[] counters = (Counter<String>[])new Counter[messageList.length];
-      for(int i = 0; i < messageList.length;i++)
-      {
-          Counter<String> categoryCounter = new Counter<String>();
-          for(MessageFeatures mf:messageList[i])
-          {
-              //do the same thing for subject and body (for now)
-              Set<String> set = new HashSet<String>();
-              set.addAll(mf.subject.keySet());
-              set.addAll(mf.body.keySet());
-              vocabulary.addAll(set);
-              categoryCounter.incrementAll(set,1.0);
-          }
-          counters[i] = categoryCounter;
-      }
-      int[] numTerms = new int[messageList.length];
-      int[] categoryDocs = new int[messageList.length];
-      for(int i=0;i<messageList.length;i++)
-      {
-          numTerms[i] = counters[i].size();
-          categoryDocs[i] = messageList[i].size();
-      }
-      
-      for(String term:vocabulary)
-      {
-          double[] probs = new double[messageList.length];
-          for(int i=0;i<messageList.length;i++)
-          {
-              probs[i] = (1.0+counters[i].getCount(term))/((double)categoryDocs[i]+numTerms[i]);
-              freqs.put(term,probs);
-          }
-      }
-      
-      return freqs;
-  }
+    
+    public static Map<String,double[]> trainBinomial(ArrayList<MessageFeatures>[] messageList, Counter<String>[] counters)
+    {
+        Map<String,double[]> freqs = new HashMap<String,double[]>();
+        int[] numTerms = new int[messageList.length];
+        int[] categoryDocs = new int[messageList.length];
+        for(int i=0;i<messageList.length;i++)
+        {
+            numTerms[i] = counters[i].size();
+            //System.out.println("num terms "+i+" "+numTerms[i]);
+            categoryDocs[i] = messageList[i].size();
+        }
+        
+        for(String term:vocabulary)
+        {
+            double[] probs = new double[messageList.length];
+            for(int i=0;i<messageList.length;i++)
+            {
+                double alpha = 0.5;
+                probs[i] = (counters[i].getCount(term)+1.0)/((double)categoryDocs[i]+numTerms[i]);
+                freqs.put(term,probs);
+            }
+        }
+        
+        return freqs;
+    }
+    
+    static Set<String>vocabulary;
+    public static Counter<String>[] prepBinomial(ArrayList<MessageFeatures>[] messageList)
+    {
+        int totalDocs = sizeOf(messageList);
+        //array index category, map of word and (smoothed) probability
+        vocabulary = new HashSet<String>();
+        Counter<String>[] counters = (Counter<String>[])new Counter[messageList.length];
+        for(int i = 0; i < messageList.length;i++)
+        {
+            Counter<String> categoryCounter = new Counter<String>();
+            for(MessageFeatures mf:messageList[i])
+            {
+                //do the same thing for subject and body (for now)
+                Set<String> set = new HashSet<String>();
+                set.addAll(mf.subject.keySet());
+                set.addAll(mf.body.keySet());
+                vocabulary.addAll(set);
+                categoryCounter.incrementAll(set,1.0);
+            }
+            counters[i] = categoryCounter;
+        }
+        
+        return counters;
+    }
     
     
     
-  public static void quickProbCheck( final double[] probability )
+  public static int quickProbCheck( final double[] probability )
   {
       double max = probability[0];
       int maxI = 0;
       for ( int i = 1; i < probability.length; i ++ )
       {
           if ( probability[i] > max)
+          {
               maxI = i;
+              max = probability[i];
+          }
       }
-      System.out.println( maxI );
+      return maxI;
   }
     
     
@@ -135,6 +148,7 @@ public class NaiveBayesClassifier {
       //setup
       int totalDocs = sizeOf(messageList);
       double[] probs = new double[messageList.length];
+      double numberRight = 0;
       
       //classification
       for(int i = 0; i < messageList.length;i++)
@@ -158,20 +172,22 @@ public class NaiveBayesClassifier {
                   }
               }
               
-              //quickProbCheck(probs);
+              //System.out.println(quickProbCheck(probs));
+              numberRight+=(quickProbCheck(probs)==mf.newsgroupNumber)?1:0;
               outputProbability(probs);
           }
       }
+      //System.out.println("percent correctly id: "+numberRight/(MESSAGES_TO_CLASSIFY*messageList.length));
   }
     
   public static void doBinomial(MessageIterator mi) {
       ArrayList<MessageFeatures>[] messageList = parseIterator(mi);
-      Map<String,double[]> freqs = trainBinomial(messageList);
+      Map<String,double[]> freqs = trainBinomial(messageList,prepBinomial(messageList));
       classifyBinomial(messageList, freqs);
   }
   
   public static void doBinomialChi2(MessageIterator mi) {
-    // Your code here.
+    //
   }
   
   public static void doMultinomial(MessageIterator mi) {
