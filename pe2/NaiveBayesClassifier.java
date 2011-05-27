@@ -136,7 +136,39 @@ public class NaiveBayesClassifier {
   }
   
   public static void doMultinomial(MessageIterator mi) {
-    // Your code here.
+	  ArrayList<MessageFeatures>[] messageList = parseIterator(mi);
+	  MultinomialClassifier mc = new MultinomialClassifier(messageList);
+	  classifyMultinomial(mc, messageList);
+  }
+  
+  public static void classifyMultinomial(MultinomialClassifier mc, ArrayList<MessageFeatures>[] messageList) {
+	  int numClasses = messageList.length;
+	  double accurate = 0;
+	  for(int klass = 0; klass < numClasses; klass++) {
+		  for(int feature = 0; feature < MESSAGES_TO_CLASSIFY; feature++) {
+			  double[] score = mc.classifyFeature(messageList[klass].get(feature));
+			  if(max(score) == klass) accurate++;
+//			  System.err.println("Results for class "+klass+" for messagefeature "+feature+":");
+//			  System.err.println("    "+max(score));
+//			  outputProbability(score);
+		  }
+	  }	
+	  System.err.println("Accurate: "+accurate);
+	  System.err.println("Total: "+(numClasses * MESSAGES_TO_CLASSIFY));
+	  double per = accurate / (numClasses * MESSAGES_TO_CLASSIFY);
+	  System.err.println("Per: "+per);
+  }
+  
+  private static int max(double[] score) {
+	  int klass = 0;
+	  double max = score[0];
+	  for(int i = 1; i < score.length; i++) {
+		  if(score[i] > max) {
+			  klass = i;
+			  max = score[i];
+		  }
+	  }
+	  return klass;
   }
   
   public static void doTWCNB(MessageIterator mi) {

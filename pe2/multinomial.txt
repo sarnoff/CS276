@@ -1,0 +1,18 @@
+I decided to use what the lecture slides called the "somewhat more subtle version" of smoothing
+to prevent overfitting, where I used an alpha instead of one. My first chosen alpha was 0.5. 
+I also used log probabilities instead of just
+probabilities to prevent underflow.  
+
+My first test run was an accuracy test. I wrote a function to pick the best 
+category for a message feature based on my Multinomial Classifier, then ran it on twenty message features per 
+category.  In a test set of 20 categories, this meant I scored 400 features.  373 features were classified correctly,
+for a total of 93.25% correct classifications.
+
+I then attempted to test different alphas to see if I could improve my accuracy.  I had the following values:
+Alpha		Accuracy
+0.5			93.25
+0.4			93.50
+0.3			94.25
+0.2			95.75
+
+*Note on the code: I used an old CS124 homework assignment as a guide.
