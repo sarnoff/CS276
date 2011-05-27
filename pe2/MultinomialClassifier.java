@@ -7,7 +7,7 @@ public class MultinomialClassifier {
 	private HashMap<Integer, ClassStatistics> classStatistics = new HashMap<Integer, ClassStatistics>();
 	private int numDocs = 0;
 	private int numWords = 0;
-	private static final double ALPHA = 0.2;
+	private static final double ALPHA = 0.5;
 	
 	public MultinomialClassifier(ArrayList<MessageFeatures>[] messageList) {
 		trainClassifier(messageList);

@@ -2,6 +2,7 @@ import java.util.*;
 import cs224n.util.*;
 
 public class NaiveBayesClassifier {
+	private static final int K = 10;
   
   //All of these need multiple passes - making an array (indexed by category number) ]
   //for ArrayLists (which contain MessageFeatures of that category)
@@ -23,6 +24,44 @@ public class NaiveBayesClassifier {
           }
       }
       return messageList;
+  }
+  
+  public static ArrayList<MessageFeatures> getMessages(MessageIterator mi) {
+	  ArrayList<MessageFeatures> list = new ArrayList<MessageFeatures>();
+	  while(true) {
+		  try
+          {
+              MessageFeatures mf = mi.getNextMessage();
+              list.add(mf);
+          } catch(Exception e) {
+        	  return list;
+          }
+	  }
+  }
+  
+  public static KFold getFolds(ArrayList<MessageFeatures> list, int fold, int num)
+  {
+      ArrayList<MessageFeatures>[] test = (ArrayList<MessageFeatures>[])new ArrayList[num];
+      ArrayList<MessageFeatures>[] train = (ArrayList<MessageFeatures>[])new ArrayList[num];
+      
+      for(int i = 0; i < num; i++) {
+          train[i] = new ArrayList<MessageFeatures>();
+          test[i] = new ArrayList<MessageFeatures>();
+      }
+      
+      for(int i = 0; i < list.size(); i++) {
+    	  MessageFeatures mf = list.get(i);
+    	  if(i % K == fold) {
+    		  test[mf.newsgroupNumber].add(mf);
+    	  } else {
+    		  train[mf.newsgroupNumber].add(mf);
+    	  }
+      }
+      
+      KFold folds = new KFold();
+      folds.test = test;
+      folds.train = train;
+      return folds;
   }
     
   public static int sizeOf(ArrayList<MessageFeatures>[] messageList)
@@ -141,22 +180,42 @@ public class NaiveBayesClassifier {
 	  classifyMultinomial(mc, messageList);
   }
   
-  public static void classifyMultinomial(MultinomialClassifier mc, ArrayList<MessageFeatures>[] messageList) {
+  public static void doKFold(MessageIterator mi) {
+	  ArrayList<MessageFeatures> list = getMessages(mi);
+	  int avg = 0;
+	  for(int fold = 0; fold < K; fold++) {
+		  KFold folds = getFolds(list, fold, mi.numNewsgroups);
+		  MultinomialClassifier mc = new MultinomialClassifier(folds.train);
+//		  System.err.println("For fold "+fold+":");
+		  avg += classifyMultinomial(mc, folds.test);
+//		  System.err.println();
+	  }
+	  
+//	  System.err.println("Average accuracy: "+(avg/10) + "%");
+//	  System.err.println();
+  }
+  
+  public static double classifyMultinomial(MultinomialClassifier mc, ArrayList<MessageFeatures>[] messageList) {
 	  int numClasses = messageList.length;
 	  double accurate = 0;
 	  for(int klass = 0; klass < numClasses; klass++) {
 		  for(int feature = 0; feature < MESSAGES_TO_CLASSIFY; feature++) {
-			  double[] score = mc.classifyFeature(messageList[klass].get(feature));
+			  MessageFeatures mf = messageList[klass].get(feature);
+			  double[] score = mc.classifyFeature(mf);
 			  if(max(score) == klass) accurate++;
+			  int mostLikelyNewsgroup = max(score);
+			  System.out.print(mostLikelyNewsgroup + "" + '\t');
 //			  System.err.println("Results for class "+klass+" for messagefeature "+feature+":");
 //			  System.err.println("    "+max(score));
 //			  outputProbability(score);
 		  }
+		  System.out.print('\n');
 	  }	
-	  System.err.println("Accurate: "+accurate);
-	  System.err.println("Total: "+(numClasses * MESSAGES_TO_CLASSIFY));
+//	  System.err.println("Accurate Classifications: "+(int)accurate);
+//	  System.err.println("Total Classified: "+(numClasses * MESSAGES_TO_CLASSIFY));
 	  double per = accurate / (numClasses * MESSAGES_TO_CLASSIFY);
-	  System.err.println("Per: "+per);
+//	  System.err.println("Accuracy: "+per*100+"%");
+	  return per * 100;
   }
   
   private static int max(double[] score) {
@@ -212,6 +271,8 @@ public class NaiveBayesClassifier {
       doMultinomial(mi);
     } else if (mode.equals("twcnb")) {
       doTWCNB(mi);
+    } else if (mode.equals("kfold")) {
+        doKFold(mi);
     } else { 
       // Add other test cases that you want to run here.
       
