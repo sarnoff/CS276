@@ -59,6 +59,7 @@ public class NaiveBayesClassifier {
       for(int i=0;i<messageList.length;i++)
       {
           numTerms[i] = counters[i].size();
+          //System.out.println("num terms "+i+" "+numTerms[i]);
           categoryDocs[i] = messageList[i].size();
       }
       
@@ -67,7 +68,8 @@ public class NaiveBayesClassifier {
           double[] probs = new double[messageList.length];
           for(int i=0;i<messageList.length;i++)
           {
-              probs[i] = (1.0+counters[i].getCount(term))/((double)categoryDocs[i]+numTerms[i]);
+              double alpha = 0.5;
+              probs[i] = (counters[i].getCount(term)+1.0)/((double)categoryDocs[i]+numTerms[i]);
               freqs.put(term,probs);
           }
       }
@@ -84,7 +86,10 @@ public class NaiveBayesClassifier {
       for ( int i = 1; i < probability.length; i ++ )
       {
           if ( probability[i] > max)
+          {
               maxI = i;
+              max = probability[i];
+          }
       }
       System.out.println( maxI );
   }
