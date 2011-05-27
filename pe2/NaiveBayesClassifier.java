@@ -79,7 +79,7 @@ public class NaiveBayesClassifier {
     
     
     
-  public static void quickProbCheck( final double[] probability )
+  public static int quickProbCheck( final double[] probability )
   {
       double max = probability[0];
       int maxI = 0;
@@ -91,7 +91,7 @@ public class NaiveBayesClassifier {
               max = probability[i];
           }
       }
-      System.out.println( maxI );
+      return maxI;
   }
     
     
@@ -101,6 +101,7 @@ public class NaiveBayesClassifier {
       //setup
       int totalDocs = sizeOf(messageList);
       double[] probs = new double[messageList.length];
+      double numberRight = 0;
       
       //classification
       for(int i = 0; i < messageList.length;i++)
@@ -124,10 +125,12 @@ public class NaiveBayesClassifier {
                   }
               }
               
-              //quickProbCheck(probs);
+              //System.out.println(quickProbCheck(probs));
+              numberRight+=(quickProbCheck(probs)==mf.newsgroupNumber)?1:0;
               outputProbability(probs);
           }
       }
+      //System.out.println("percent correctly id: "+numberRight/(MESSAGES_TO_CLASSIFY*messageList.length));
   }
     
   public static void doBinomial(MessageIterator mi) {
