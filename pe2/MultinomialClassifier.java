@@ -26,7 +26,7 @@ public class MultinomialClassifier {
 		int klass = mf.newsgroupNumber;
 		
 		//Get the statistics holder for the message's class
-		ClassStatistics stats = new ClassStatistics(klass);
+		ClassStatistics stats = new ClassStatistics();
 		if(classStatistics.containsKey(klass)) stats = classStatistics.get(klass);
 		
 		//Find all words in the message

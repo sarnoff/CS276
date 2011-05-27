@@ -2,14 +2,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class ClassStatistics {
-	private int klass;
 	public int numDocs = 0;
 	public int numWords = 0;
 	private HashMap<String, Integer> wordCounts = new HashMap<String, Integer>();
-	
-	public ClassStatistics(int klass) {
-		this.klass = klass;
-	}
 	
 	public void addDoc() {
 		this.numDocs++;

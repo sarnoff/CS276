@@ -1,6 +1,7 @@
 import java.util.*;
 import cs224n.util.*;
 
+@SuppressWarnings("unchecked")
 public class NaiveBayesClassifier {
 	private static final int K = 10;
   
@@ -71,8 +72,7 @@ public class NaiveBayesClassifier {
           size += messageList[i].size();
       return size;
   }
-    
-    
+	  
     public static Map<String,double[]> trainBinomial(ArrayList<MessageFeatures>[] messageList, Counter<String>[] counters)
     {
         Map<String,double[]> freqs = new HashMap<String,double[]>();
@@ -90,7 +90,6 @@ public class NaiveBayesClassifier {
             double[] probs = new double[messageList.length];
             for(int i=0;i<messageList.length;i++)
             {
-                double alpha = 0.5;
                 probs[i] = (counters[i].getCount(term)+1.0)/((double)categoryDocs[i]+numTerms[i]);
                 freqs.put(term,probs);
             }
@@ -102,7 +101,6 @@ public class NaiveBayesClassifier {
     static Set<String>vocabulary;
     public static Counter<String>[] prepBinomial(ArrayList<MessageFeatures>[] messageList)
     {
-        int totalDocs = sizeOf(messageList);
         //array index category, map of word and (smoothed) probability
         vocabulary = new HashSet<String>();
         Counter<String>[] counters = (Counter<String>[])new Counter[messageList.length];
