@@ -7,7 +7,7 @@ public class MultinomialClassifier {
 	private HashMap<Integer, ClassStatistics> classStatistics = new HashMap<Integer, ClassStatistics>();
 	private int numDocs = 0;
 	private int numWords = 0;
-	private static final double ALPHA = 0.5;
+	public static double ALPHA = 0.3;
 	
 	public MultinomialClassifier(ArrayList<MessageFeatures>[] messageList) {
 		trainClassifier(messageList);
@@ -37,7 +37,10 @@ public class MultinomialClassifier {
 		//Update stats with the new information
 		stats.addDoc();
 		stats.addNumWords(words.size());
-		stats.addWords(words);
+		for(String word : words) {
+			double num = mf.body.getCount(word) + mf.subject.getCount(word);
+			for(int i = 0; i < num; i++) { stats.addWord(word); }
+		}
 		
 		//Update instance variables
 		numDocs++;

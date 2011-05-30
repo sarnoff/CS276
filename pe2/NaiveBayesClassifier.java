@@ -200,13 +200,11 @@ public class NaiveBayesClassifier {
 	  for(int fold = 0; fold < K; fold++) {
 		  KFold folds = getFolds(list, fold, mi.numNewsgroups);
 		  MultinomialClassifier mc = new MultinomialClassifier(folds.train);
-//		  System.err.println("For fold "+fold+":");
 		  avg += classifyMultinomial(mc, folds.test);
-//		  System.err.println();
 	  }
 	  
-//	  System.err.println("Average accuracy: "+(avg/10) + "%");
-//	  System.err.println();
+	  System.err.println("Average accuracy: "+(avg/10) + "%");
+	  System.err.println();
   }
   
   public static double classifyMultinomial(MultinomialClassifier mc, ArrayList<MessageFeatures>[] messageList) {
@@ -216,19 +214,14 @@ public class NaiveBayesClassifier {
 		  for(int feature = 0; feature < MESSAGES_TO_CLASSIFY; feature++) {
 			  MessageFeatures mf = messageList[klass].get(feature);
 			  double[] score = mc.classifyFeature(mf);
-			  if(max(score) == klass) accurate++;
 			  int mostLikelyNewsgroup = max(score);
+			  if(mostLikelyNewsgroup == klass) accurate++;
 			  System.out.print(mostLikelyNewsgroup + "" + '\t');
-//			  System.err.println("Results for class "+klass+" for messagefeature "+feature+":");
-//			  System.err.println("    "+max(score));
-//			  outputProbability(score);
 		  }
 		  System.out.print('\n');
 	  }	
-//	  System.err.println("Accurate Classifications: "+(int)accurate);
-//	  System.err.println("Total Classified: "+(numClasses * MESSAGES_TO_CLASSIFY));
+
 	  double per = accurate / (numClasses * MESSAGES_TO_CLASSIFY);
-//	  System.err.println("Accuracy: "+per*100+"%");
 	  return per * 100;
   }
   

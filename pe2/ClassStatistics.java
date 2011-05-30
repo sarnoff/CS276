@@ -14,18 +14,13 @@ public class ClassStatistics {
 		this.numWords += num;
 	}
 	
-	public void addWords(HashSet<String> words) {
-		for(String word : words)
-			addWord(word);
-	}
-	
 	public int getCount(String word) {
 		if(!wordCounts.containsKey(word))
 			return 0;
 		return wordCounts.get(word);
 	}
 	
-	private void addWord(String word) {
+	public void addWord(String word) {
 		int count = 0;
 		if(wordCounts.containsKey(word))
 			count = wordCounts.get(word);
