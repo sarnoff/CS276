@@ -5,8 +5,8 @@ import cs224n.util.PriorityQueue;
 @SuppressWarnings("unchecked")
 public class NaiveBayesClassifier {
 	private static final int K = 10;
-    private static final int MESSAGES_TO_CLASSIFY = 20;
-    private static final int FEATURES_PER_NEWSGROUP = 300;
+    public static final int MESSAGES_TO_CLASSIFY = 20;
+    public static final int FEATURES_PER_NEWSGROUP = 300;
     //should be false when turned in
     private static final boolean DEBUG = true;
     private static final boolean QUICK_PROB_CHECK = true;
@@ -333,6 +333,18 @@ public class NaiveBayesClassifier {
     
     /**
      *
+     * Multinomial feature selected
+     *
+     **/
+    
+    public static void doFeatureMultinomial(MessageIterator mi) {
+        ArrayList<MessageFeatures>[] messageList = parseIterator(mi);
+        MultinomialClassifierWithFeatures mc = new MultinomialClassifierWithFeatures(messageList);
+        classifyMultinomial(mc, messageList);
+    }
+    
+    /**
+     *
      * K-Fold Methods
      *
      **/
@@ -362,6 +374,16 @@ public class NaiveBayesClassifier {
 	  System.err.println("Average accuracy: "+(avg/10) + "%");
 	  System.err.println();
   }
+    
+    public static void doKFoldFeatureMultinomial(MessageIterator mi) {
+        ArrayList<MessageFeatures> list = getMessages(mi);
+        int avg = 0;
+        for(int fold = 0; fold < K; fold++) {
+            KFold folds = getFolds(list, fold, mi.numNewsgroups);
+            MultinomialClassifierWithFeatures mc = new MultinomialClassifierWithFeatures(folds.train);
+            avg += classifyMultinomial(mc, folds.test);
+        }
+    }
   
     public static void doKFoldBinomial(MessageIterator mi) {
         ArrayList<MessageFeatures> list = getMessages(mi);
@@ -468,11 +490,16 @@ public class NaiveBayesClassifier {
     } else if (mode.equals("binomial-chi2")) {
       doBinomialChi2(mi);
     } else if (mode.equals("multinomial")) {
-      doMultinomial(mi);
-    } else if (mode.equals("twcnb")) {
+        doMultinomial(mi);
+    } else if (mode.equals("multinomial-chi2")) {
+        doFeatureMultinomial(mi);
+    } 
+    else if (mode.equals("twcnb")) {
       doTWCNB(mi);
     } else if (mode.equals("kfold-multinomial")) {
     	doKFoldMultinomial(mi);
+    } else if (mode.equals("kfold-multinomial-chi2")) {
+    	doKFoldFeatureMultinomial(mi);
     } else if (mode.equals("kfold-binomial")) {
     	doKFoldBinomial(mi);
     } else if (mode.equals("kfold-chi2")) {
@@ -481,7 +508,6 @@ public class NaiveBayesClassifier {
     	doKFoldUpweighted(mi);
     } else { 
       // Add other test cases that you want to run here.
-      
       System.err.println("Unknown mode "+mode);
       System.exit(-1);
     }

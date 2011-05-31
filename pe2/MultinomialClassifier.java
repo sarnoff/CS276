@@ -4,19 +4,22 @@ import java.util.HashSet;
 
 
 public class MultinomialClassifier {
-	private HashMap<Integer, ClassStatistics> classStatistics = new HashMap<Integer, ClassStatistics>();
-	private HashSet<String> vocabulary = new HashSet<String>();
-	private int numDocs = 0;
-	private int numWords = 0;
+	protected HashMap<Integer, ClassStatistics> classStatistics = new HashMap<Integer, ClassStatistics>();
+	protected HashSet<String> vocabulary = new HashSet<String>();
+	protected int numDocs = 0;
+	protected int numWords = 0;
 	public static double ALPHA = 0.5;
 	
-	private HashMap<Integer, Double> wcnbValues = new HashMap<Integer, Double>();
+	protected HashMap<Integer, Double> wcnbValues = new HashMap<Integer, Double>();
 	
 	public MultinomialClassifier(ArrayList<MessageFeatures>[] messageList) {
 		trainClassifier(messageList);
 	}
+    
+    protected MultinomialClassifier() {
+	}
 	
-	private void trainClassifier(ArrayList<MessageFeatures>[] messageList) {
+	protected void trainClassifier(ArrayList<MessageFeatures>[] messageList) {
 		for(int i = 0; i < messageList.length; i++) {
 			ArrayList<MessageFeatures> list = messageList[i];
 			for(MessageFeatures mf : list) {
@@ -25,7 +28,7 @@ public class MultinomialClassifier {
 		}
 	}
 	
-	private void trainFeature(MessageFeatures mf) {
+	protected void trainFeature(MessageFeatures mf) {
 		int klass = mf.newsgroupNumber;
 		
 		//Get the statistics holder for the message's class
@@ -86,7 +89,7 @@ public class MultinomialClassifier {
 		return scores;
 	}
 	
-	private double scoreWCNBFeature(int klass, MessageFeatures mf) {
+	protected double scoreWCNBFeature(int klass, MessageFeatures mf) {
 		HashSet<String> words = new HashSet<String>();
 		words.addAll(mf.body.keySet());
 		words.addAll(mf.subject.keySet());
@@ -101,7 +104,7 @@ public class MultinomialClassifier {
 		return score;
 	}
 	
-	private double scoreWCNBWord(int klass, String word) {
+	protected double scoreWCNBWord(int klass, String word) {
 		double sum = Math.abs(wcnbValues.get(klass));
 		return scoreCNBWord(klass, word) / sum;
 		
@@ -117,7 +120,7 @@ public class MultinomialClassifier {
 		return scores;
 	}
 	
-	private double scoreTWCNBFeature(int klass, MessageFeatures mf) {
+	protected double scoreTWCNBFeature(int klass, MessageFeatures mf) {
 		HashSet<String> words = new HashSet<String>();
 		words.addAll(mf.body.keySet());
 		words.addAll(mf.subject.keySet());
@@ -132,7 +135,7 @@ public class MultinomialClassifier {
 		return score;
 	}
 	
-	private double scoreTWCNBWord(int klass, String word) {
+	protected double scoreTWCNBWord(int klass, String word) {
 		double sum = Math.abs(wcnbValues.get(klass));
 		double numOccurrencesWordInDocsOfOtherClass = 0;
 		double numOfWordsInDocsOfOtherClass = 0;
@@ -151,7 +154,7 @@ public class MultinomialClassifier {
 		return -1 * Math.log(probabilityOfWordInClass) / sum;
 	}
 	
-	private double transform(double freq) {
+	protected double transform(double freq) {
 		return Math.log(1 + freq);
 	}
 	
@@ -164,7 +167,7 @@ public class MultinomialClassifier {
 		return scores;
 	}
 	
-	private double scoreCNBFeature(int klass, MessageFeatures mf) {
+	protected double scoreCNBFeature(int klass, MessageFeatures mf) {
 		HashSet<String> words = new HashSet<String>();
 		words.addAll(mf.body.keySet());
 		words.addAll(mf.subject.keySet());
@@ -179,7 +182,7 @@ public class MultinomialClassifier {
 		return score;
 	}
 	
-	private double scoreCNBWord(int klass, String word) {
+	protected double scoreCNBWord(int klass, String word) {
 		double numOccurrencesWordInDocsOfOtherClass = 0;
 		double numOfWordsInDocsOfOtherClass = 0;
 		
@@ -206,7 +209,7 @@ public class MultinomialClassifier {
 		return scores;
 	}
 	
-	private double scoreFeature(int klass, MessageFeatures mf) {
+	protected double scoreFeature(int klass, MessageFeatures mf) {
 		HashSet<String> words = new HashSet<String>();
 		words.addAll(mf.body.keySet());
 		words.addAll(mf.subject.keySet());
@@ -221,7 +224,7 @@ public class MultinomialClassifier {
 		return score;
 	}
 	
-	private double scoreWord(int klass, String word) {
+	protected double scoreWord(int klass, String word) {
 		ClassStatistics stats = classStatistics.get(klass);
 	
 		double numOccurrencesWordInDocsOfSameClass = stats.getCount(word);
