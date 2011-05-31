@@ -8,8 +8,8 @@ public class NaiveBayesClassifier {
     public static final int MESSAGES_TO_CLASSIFY = 20;
     public static final int FEATURES_PER_NEWSGROUP = 300;
     //should be false when turned in
-    private static final boolean DEBUG = true;
-    private static final boolean QUICK_PROB_CHECK = true;
+    private static final boolean DEBUG = false;
+    private static final boolean QUICK_PROB_CHECK = false;
     
   
     /**
@@ -383,6 +383,9 @@ public class NaiveBayesClassifier {
             MultinomialClassifierWithFeatures mc = new MultinomialClassifierWithFeatures(folds.train);
             avg += classifyMultinomial(mc, folds.test);
         }
+        
+        System.err.println("Average accuracy: "+(avg/10) + "%");
+        System.err.println();
     }
   
     public static void doKFoldBinomial(MessageIterator mi) {
