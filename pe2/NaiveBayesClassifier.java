@@ -1,5 +1,6 @@
 import java.util.*;
 import cs224n.util.*;
+import cs224n.util.PriorityQueue;
 
 @SuppressWarnings("unchecked")
 public class NaiveBayesClassifier {
@@ -139,7 +140,6 @@ public class NaiveBayesClassifier {
       return maxI;
   }
     
-    
   private final static int MESSAGES_TO_CLASSIFY = 20;
   public static double classifyBinomial(ArrayList<MessageFeatures>[] messageList, Map<String,double[]> model)
   {
@@ -169,7 +169,6 @@ public class NaiveBayesClassifier {
                           probs[k]+=count*Math.log(model.get(term)[k]);
                   }
               }
-              
               //System.out.println(quickProbCheck(probs));
               numberRight+=(max(probs)==mf.newsgroupNumber)?1:0;
               outputProbability(probs);
@@ -184,9 +183,146 @@ public class NaiveBayesClassifier {
       Map<String,double[]> freqs = trainBinomial(messageList,prepBinomial(messageList));
       classifyBinomial(messageList, freqs);
   }
+    
+    public static final int FEATURES_PER_NEWSGROUP = 300;
+    public static ArrayList<String>[] prepChi2(ArrayList<MessageFeatures>[] messageList, Counter<String>[] counters)
+    {
+        Counter<String>[] features = (Counter<String>[])new Counter[messageList.length];
+        double N = 0;
+        for(Counter<String> c:counters)
+            N+=c.totalCount();
+        for(int i = 0; i <counters.length;i++)
+        {
+            features[i]=new Counter<String>();
+            Counter<String> c = counters[i];
+            double count = c.totalCount();
+            for(String term:c.keySet())
+            {
+                double A = c.getCount(term);
+                double C = count-A;
+                //for term in doc not in class
+                double B = -A;
+                for(Counter<String> c2:counters)
+                    B+=c2.getCount(term);
+                double D = N-A-B-C;
+                double chi2 = N*(A*D-C*B)*(A*D-C*B)/((A+C)*(B+D)*(A+B)*(C+D));
+//                if(term.equals("atheist"))
+//                   System.out.println("atheist "+"A "+A+" B "+B+" C "+C+" D "+D+" chi2 "+chi2);
+//                if(term.equals("write"))
+//                    System.out.println("write "+"A "+A+" B "+B+" C "+C+" D "+D+" chi2 "+chi2);
+                features[i].setCount(term,chi2);
+            }
+        }
+        
+        ArrayList<String>[] featureSet = (ArrayList<String>[])new ArrayList[features.length];
+        for(int i = 0;i<features.length;i++)
+        {
+            PriorityQueue<String> pq = features[i].asPriorityQueue();
+            featureSet[i] = new ArrayList<String>();
+            for(int j = 0; j < FEATURES_PER_NEWSGROUP&&pq.hasNext();j++)
+                featureSet[i].add(pq.next());
+        }
+        return featureSet;
+    }
+    
+    public static Map<String,double[]> trainChi2(ArrayList<MessageFeatures>[] messageList, Counter<String>[] counters, ArrayList<String>[] featureSet)
+    {
+        Map<String,double[]> freqs = new HashMap<String,double[]>();
+        int[] numTerms = new int[messageList.length];
+        int[] categoryDocs = new int[messageList.length];
+        for(int i=0;i<messageList.length;i++)
+        {
+            numTerms[i] = featureSet[i].size();//counters[i].size();
+            //System.out.println("num terms "+i+" "+numTerms[i]);
+            categoryDocs[i] = messageList[i].size();
+        }
+        
+        Set<String> vocab = new HashSet<String>();
+        for(Counter<String> c:counters)
+            vocab.addAll(c.keySet());
+        
+        Set<String> features = new HashSet<String>();
+        for(ArrayList<String> a:featureSet)
+            features.addAll(a);
+        vocab.retainAll(features);
+        
+        for(String term:vocab)
+        {
+            double[] probs = new double[messageList.length];
+            for(int i=0;i<messageList.length;i++)
+            {
+                probs[i] = (counters[i].getCount(term)+1.0)/((double)categoryDocs[i]+numTerms[i]);
+                freqs.put(term,probs);
+            }
+        }
+        
+        return freqs;
+    }
+    
+    public static double classifyChi2(ArrayList<MessageFeatures>[] messageList, Map<String,double[]> model, ArrayList<String>[] featureSet)
+    {
+        //setup
+        int totalDocs = sizeOf(messageList);
+        double[] probs = new double[messageList.length];
+        double numberRight = 0;
+        
+        //features
+        Set<String>features = new HashSet<String>();
+        for(ArrayList<String> f:featureSet)
+            features.addAll(f);
+        
+        //classification
+        for(int i = 0; i < messageList.length;i++)
+        {
+            for(int j = 0; j<MESSAGES_TO_CLASSIFY;j++)
+            {
+                for(int k = 0; k < messageList.length; k++)
+                    probs[k]=Math.log((double)messageList[k].size()/totalDocs);
+                
+                MessageFeatures mf = messageList[i].get(j);
+                Set<String>terms = new HashSet<String>();
+                terms.addAll(mf.subject.keySet());
+                terms.addAll(mf.body.keySet());
+                terms.retainAll(features);
+                
+                for(String term:terms)
+                {
+                    for(int k = 0; k < messageList.length;k++)
+                    {
+                        double count = mf.subject.getCount(term)+mf.body.getCount(term);
+                        if(model.containsKey(term))
+                            if(featureSet[k].contains(term))
+                                probs[k]+=count*Math.log(model.get(term)[k]);
+                            else//grabbing the smoothed version (precomputed)
+                                probs[k]+=count*Math.log(model.get(term)[k]);
+                    }
+                }
+                //System.out.println(quickProbCheck(probs));
+                numberRight+=(max(probs)==mf.newsgroupNumber)?1:0;
+                outputProbability(probs);
+            }
+        }
+        //System.out.println("percent correctly id: "+numberRight/(MESSAGES_TO_CLASSIFY*messageList.length));
+        return (numberRight * 100.0) /(MESSAGES_TO_CLASSIFY * messageList.length);
+    }
   
+    private final static int TOP_WORDS_TO_PRINT = 20;
   public static void doBinomialChi2(MessageIterator mi) {
-    //
+    //outputting 20 best words for each newsgroup
+      ArrayList<MessageFeatures>[] messageList = parseIterator(mi);
+      Counter<String>[] counters = prepBinomial(messageList);
+      ArrayList<String>[] featureSet = prepChi2(messageList,counters);
+      for(List<String> l:featureSet)
+      {
+          if(TOP_WORDS_TO_PRINT>0)
+              System.out.print(l.get(0));
+          for(int i = 1; i < TOP_WORDS_TO_PRINT&&i<l.size(); i++)
+              System.out.print("\t"+l.get(i));
+          if(TOP_WORDS_TO_PRINT>0)
+              System.out.println("");
+      }
+      Map<String,double[]> freqs = trainChi2(messageList,counters,featureSet);
+      classifyChi2(messageList,freqs, featureSet);
   }
   
   public static void doMultinomial(MessageIterator mi) {
