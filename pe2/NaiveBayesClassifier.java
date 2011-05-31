@@ -82,7 +82,10 @@ public class NaiveBayesClassifier {
   {
       int size = 0;
       for(int i = 0; i < messageList.length;i++)
+      {
           size += messageList[i].size();
+          //System.err.println("class "+i+":"+messageList[i].size());
+      }
       return size;
   }
     
