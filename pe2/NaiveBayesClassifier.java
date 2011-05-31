@@ -349,18 +349,33 @@ public class NaiveBayesClassifier {
 	  System.err.println();
   }
   
-  public static void doKFoldBinomial(MessageIterator mi) {
-	  ArrayList<MessageFeatures> list = getMessages(mi);
-	  int avg = 0;
-	  for(int fold = 0; fold < K; fold++) {
-		  KFold folds = getFolds(list, fold, mi.numNewsgroups);
-		  Map<String,double[]> freqs = trainBinomial(folds.train, prepBinomial(folds.train));
-	      avg += classifyBinomial(folds.test, freqs);
-	  }
-	  
-	  System.err.println("Average accuracy: "+(avg/10) + "%");
-	  System.err.println();
-  }
+    public static void doKFoldBinomial(MessageIterator mi) {
+        ArrayList<MessageFeatures> list = getMessages(mi);
+        int avg = 0;
+        for(int fold = 0; fold < K; fold++) {
+            KFold folds = getFolds(list, fold, mi.numNewsgroups);
+            Map<String,double[]> freqs = trainBinomial(folds.train, prepBinomial(folds.train));
+            avg += classifyBinomial(folds.test, freqs);
+        }
+        
+        System.err.println("Average accuracy: "+(avg/10) + "%");
+        System.err.println();
+    }
+    
+    public static void doKFoldChi2(MessageIterator mi) {
+        ArrayList<MessageFeatures> list = getMessages(mi);
+        int avg = 0;
+        for(int fold = 0; fold < K; fold++) {
+            KFold folds = getFolds(list, fold, mi.numNewsgroups);
+            Counter<String>[] counters = prepBinomial(folds.train);
+            ArrayList<String>[] featureSet = getFeatureSet(folds.train,counters);
+            Map<String,double[]> freqs = trainBinomial(folds.train, counters, featureSet);
+            avg += classifyBinomial(folds.test, freqs, featureSet);
+        }
+        
+        System.err.println("Average accuracy: "+(avg/10) + "%");
+        System.err.println();
+    }
   
   private static int max(double[] score) {
 	  int klass = 0;
@@ -442,7 +457,9 @@ public class NaiveBayesClassifier {
     	doKFoldMultinomial(mi);
     } else if (mode.equals("kfold-binomial")) {
     	doKFoldBinomial(mi);
-    } else { 
+    } else if (mode.equals("kfold-chi2")) {
+    	doKFoldChi2(mi);
+    }else { 
       // Add other test cases that you want to run here.
       
       System.err.println("Unknown mode "+mode);
