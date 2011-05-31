@@ -141,7 +141,7 @@ public class NaiveBayesClassifier {
     
     
   private final static int MESSAGES_TO_CLASSIFY = 20;
-  public static void classifyBinomial(ArrayList<MessageFeatures>[] messageList, Map<String,double[]> model)
+  public static double classifyBinomial(ArrayList<MessageFeatures>[] messageList, Map<String,double[]> model)
   {
       //setup
       int totalDocs = sizeOf(messageList);
@@ -171,11 +171,12 @@ public class NaiveBayesClassifier {
               }
               
               //System.out.println(quickProbCheck(probs));
-              numberRight+=(quickProbCheck(probs)==mf.newsgroupNumber)?1:0;
+              numberRight+=(max(probs)==mf.newsgroupNumber)?1:0;
               outputProbability(probs);
           }
       }
       //System.out.println("percent correctly id: "+numberRight/(MESSAGES_TO_CLASSIFY*messageList.length));
+      return (numberRight * 100.0) /(MESSAGES_TO_CLASSIFY * messageList.length);
   }
     
   public static void doBinomial(MessageIterator mi) {
@@ -194,13 +195,25 @@ public class NaiveBayesClassifier {
 	  classifyMultinomial(mc, messageList);
   }
   
-  public static void doKFold(MessageIterator mi) {
+  public static void doKFoldMultinomial(MessageIterator mi) {
 	  ArrayList<MessageFeatures> list = getMessages(mi);
 	  int avg = 0;
 	  for(int fold = 0; fold < K; fold++) {
 		  KFold folds = getFolds(list, fold, mi.numNewsgroups);
 		  MultinomialClassifier mc = new MultinomialClassifier(folds.train);
 		  avg += classifyMultinomial(mc, folds.test);
+	  }
+	  System.err.println("Average accuracy: "+(avg/10) + "%");
+	  System.err.println();
+  }
+  
+  public static void doKFoldBinomial(MessageIterator mi) {
+	  ArrayList<MessageFeatures> list = getMessages(mi);
+	  int avg = 0;
+	  for(int fold = 0; fold < K; fold++) {
+		  KFold folds = getFolds(list, fold, mi.numNewsgroups);
+		  Map<String,double[]> freqs = trainBinomial(folds.train, prepBinomial(folds.train));
+	      avg += classifyBinomial(folds.test, freqs);
 	  }
 	  
 	  System.err.println("Average accuracy: "+(avg/10) + "%");
@@ -222,6 +235,9 @@ public class NaiveBayesClassifier {
 	  }	
 
 	  double per = accurate / (numClasses * MESSAGES_TO_CLASSIFY);
+//	  System.err.println("Accurate: "+accurate);
+//	  System.err.println("Out of: "+(numClasses * MESSAGES_TO_CLASSIFY));
+//	  System.err.println("Accuracy: "+(per * 100) + "%");
 	  return per * 100;
   }
   
@@ -238,7 +254,30 @@ public class NaiveBayesClassifier {
   }
   
   public static void doTWCNB(MessageIterator mi) {
-    // Your code here.
+	  ArrayList<MessageFeatures>[] messageList = parseIterator(mi);
+	  MultinomialClassifier mc = new MultinomialClassifier(messageList);
+	  classifyTWCNB(mc, messageList);
+  }
+  
+  private static double classifyTWCNB(MultinomialClassifier mc, ArrayList<MessageFeatures>[] messageList) {
+	  int numClasses = messageList.length;
+	  double accurate = 0;
+	  for(int klass = 0; klass < numClasses; klass++) {
+		  for(int feature = 0; feature < MESSAGES_TO_CLASSIFY; feature++) {
+			  MessageFeatures mf = messageList[klass].get(feature);
+			  double[] score = mc.classifyCNBFeature(mf);
+			  int mostLikelyNewsgroup = max(score);
+			  if(mostLikelyNewsgroup == klass) accurate++;
+//			  System.out.print(mostLikelyNewsgroup + "" + '\t');
+		  }
+//		  System.out.print('\n');
+	  }	
+
+	  double per = accurate / (numClasses * MESSAGES_TO_CLASSIFY);
+	  System.err.println("Accurate: "+accurate);
+	  System.err.println("Out of: "+(numClasses * MESSAGES_TO_CLASSIFY));
+	  System.err.println("Accuracy: "+(per * 100) + "%");
+	  return per * 100;
   }
   
   public static void outputProbability( final double[] probability )
@@ -278,8 +317,10 @@ public class NaiveBayesClassifier {
       doMultinomial(mi);
     } else if (mode.equals("twcnb")) {
       doTWCNB(mi);
-    } else if (mode.equals("kfold")) {
-        doKFold(mi);
+    } else if (mode.equals("kfold-multinomial")) {
+    	doKFoldMultinomial(mi);
+    } else if (mode.equals("kfold-binomial")) {
+    	doKFoldBinomial(mi);
     } else { 
       // Add other test cases that you want to run here.
       

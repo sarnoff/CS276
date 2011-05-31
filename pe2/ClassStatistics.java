@@ -1,5 +1,4 @@
 import java.util.HashMap;
-import java.util.HashSet;
 
 public class ClassStatistics {
 	public int numDocs = 0;

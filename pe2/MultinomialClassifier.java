@@ -7,7 +7,7 @@ public class MultinomialClassifier {
 	private HashMap<Integer, ClassStatistics> classStatistics = new HashMap<Integer, ClassStatistics>();
 	private int numDocs = 0;
 	private int numWords = 0;
-	public static double ALPHA = 0.3;
+	public static double ALPHA = 0.5;
 	
 	public MultinomialClassifier(ArrayList<MessageFeatures>[] messageList) {
 		trainClassifier(messageList);
@@ -48,6 +48,48 @@ public class MultinomialClassifier {
 		classStatistics.put(klass, stats);
 	}
 	
+	public double[] classifyCNBFeature(MessageFeatures mf) {
+		int numClasses = classStatistics.size();
+		double[] scores = new double[numClasses];
+		for(int klass = 0; klass < numClasses; klass++) {
+			scores[klass] = scoreCNBFeature(klass, mf);
+		}
+		return scores;
+	}
+	
+	private double scoreCNBFeature(int klass, MessageFeatures mf) {
+		HashSet<String> words = new HashSet<String>();
+		words.addAll(mf.body.keySet());
+		words.addAll(mf.subject.keySet());
+		
+		double score = 0;
+		for(String word : words) {
+			double count = mf.body.getCount(word) + mf.subject.getCount(word);
+			for(int i = 0; i < count; i++) {
+				score += scoreCNBWord(klass, word);
+			}
+		}
+		return score;
+	}
+	
+	private double scoreCNBWord(int klass, String word) {
+		double numOccurrencesWordInDocsOfOtherClass = 0;
+		double numOfWordsInDocsOfOtherClass = 0;
+		
+		for(Integer key : classStatistics.keySet()) {
+			if(key == klass) continue;
+			ClassStatistics stats = classStatistics.get(key);
+			numOccurrencesWordInDocsOfOtherClass += stats.getCount(word);
+			numOfWordsInDocsOfOtherClass += stats.numWords;
+		}
+		
+		double probabilityOfWordInClassNumerator = numOccurrencesWordInDocsOfOtherClass + ALPHA;
+		double probabilityOfWordInClassDenominator = numOfWordsInDocsOfOtherClass + this.numWords * ALPHA;
+		double probabilityOfWordInClass = probabilityOfWordInClassNumerator / probabilityOfWordInClassDenominator;
+		
+		return -1 * Math.log(probabilityOfWordInClass);
+	}
+	
 	public double[] classifyFeature(MessageFeatures mf) {
 		int numClasses = classStatistics.size();
 		double[] scores = new double[numClasses];
@@ -64,7 +106,10 @@ public class MultinomialClassifier {
 		
 		double score = 0;
 		for(String word : words) {
-			score += scoreWord(klass, word);
+			double count = mf.body.getCount(word) + mf.subject.getCount(word);
+			for(int i = 0; i < count; i++) {
+				score += scoreWord(klass, word);
+			}
 		}
 		return score;
 	}
