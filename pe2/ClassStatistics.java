@@ -9,10 +9,6 @@ public class ClassStatistics {
 		this.numDocs++;
 	}
 	
-	public void addNumWords(int num) {
-		this.numWords += num;
-	}
-	
 	public int getCount(String word) {
 		if(!wordCounts.containsKey(word))
 			return 0;
@@ -24,5 +20,6 @@ public class ClassStatistics {
 		if(wordCounts.containsKey(word))
 			count = wordCounts.get(word);
 		wordCounts.put(word, count + 1);
+		numWords++;
 	}
 }

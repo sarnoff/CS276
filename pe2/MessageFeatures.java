@@ -69,7 +69,7 @@ public class MessageFeatures implements Serializable {
 	protected static final String delims = " \t\n\r\f.()\"',-:;/\\?!@";
 
 	protected static void parseLine(String line, Counter<String> counter, Stemmer stemmer, HashSet<String> stopWords) {
-		line = line.toLowerCase();
+		//line = line.toLowerCase();
 
 		// first find hyperlinks
 		Matcher mLink = hyperlink.matcher(line);

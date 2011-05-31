@@ -140,7 +140,7 @@ public class NaiveBayesClassifier {
   }
     
     
-  private final static int MESSAGES_TO_CLASSIFY = 20;
+  private final static int MESSAGES_TO_CLASSIFY = 200;
   public static double classifyBinomial(ArrayList<MessageFeatures>[] messageList, Map<String,double[]> model)
   {
       //setup
@@ -193,6 +193,20 @@ public class NaiveBayesClassifier {
 	  ArrayList<MessageFeatures>[] messageList = parseIterator(mi);
 	  MultinomialClassifier mc = new MultinomialClassifier(messageList);
 	  classifyMultinomial(mc, messageList);
+  }
+  
+  public static void doKFoldUpweighted(MessageIterator mi) {
+	  ArrayList<MessageFeatures> list = getMessages(mi);
+	  int avg = 0;
+	  for(int fold = 0; fold < K; fold++) {
+		  KFold folds = getFolds(list, fold, mi.numNewsgroups);
+		  MultinomialClassifier mc = new MultinomialClassifier(folds.train);
+//		  mc.upweightSubjects(folds.train);
+		  mc.trainWCNB();
+		  avg += classifyTWCNB(mc, folds.test);
+	  }
+	  System.err.println("Average accuracy: "+(avg/10) + "%");
+	  System.err.println();
   }
   
   public static void doKFoldMultinomial(MessageIterator mi) {
@@ -256,16 +270,20 @@ public class NaiveBayesClassifier {
   public static void doTWCNB(MessageIterator mi) {
 	  ArrayList<MessageFeatures>[] messageList = parseIterator(mi);
 	  MultinomialClassifier mc = new MultinomialClassifier(messageList);
+	  mc.trainWCNB();
 	  classifyTWCNB(mc, messageList);
   }
   
   private static double classifyTWCNB(MultinomialClassifier mc, ArrayList<MessageFeatures>[] messageList) {
 	  int numClasses = messageList.length;
 	  double accurate = 0;
+	  int classified = 0;
 	  for(int klass = 0; klass < numClasses; klass++) {
 		  for(int feature = 0; feature < MESSAGES_TO_CLASSIFY; feature++) {
+			  if(feature >= messageList[klass].size()) continue;
+			  classified++;
 			  MessageFeatures mf = messageList[klass].get(feature);
-			  double[] score = mc.classifyCNBFeature(mf);
+			  double[] score = mc.classifyTWCNBFeature(mf);
 			  int mostLikelyNewsgroup = max(score);
 			  if(mostLikelyNewsgroup == klass) accurate++;
 //			  System.out.print(mostLikelyNewsgroup + "" + '\t');
@@ -273,10 +291,10 @@ public class NaiveBayesClassifier {
 //		  System.out.print('\n');
 	  }	
 
-	  double per = accurate / (numClasses * MESSAGES_TO_CLASSIFY);
-	  System.err.println("Accurate: "+accurate);
-	  System.err.println("Out of: "+(numClasses * MESSAGES_TO_CLASSIFY));
-	  System.err.println("Accuracy: "+(per * 100) + "%");
+	  double per = accurate / (classified);
+//	  System.err.println("Accurate: "+accurate);
+//	  System.err.println("Out of: "+(classified));
+//	  System.err.println("Accuracy: "+(per * 100) + "%");
 	  return per * 100;
   }
   
@@ -321,6 +339,8 @@ public class NaiveBayesClassifier {
     	doKFoldMultinomial(mi);
     } else if (mode.equals("kfold-binomial")) {
     	doKFoldBinomial(mi);
+    } else if (mode.equals("upweighted")) {
+    	doKFoldUpweighted(mi);
     } else { 
       // Add other test cases that you want to run here.
       

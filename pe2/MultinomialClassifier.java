@@ -5,9 +5,12 @@ import java.util.HashSet;
 
 public class MultinomialClassifier {
 	private HashMap<Integer, ClassStatistics> classStatistics = new HashMap<Integer, ClassStatistics>();
+	private HashSet<String> vocabulary = new HashSet<String>();
 	private int numDocs = 0;
 	private int numWords = 0;
 	public static double ALPHA = 0.5;
+	
+	private HashMap<Integer, Double> wcnbValues = new HashMap<Integer, Double>();
 	
 	public MultinomialClassifier(ArrayList<MessageFeatures>[] messageList) {
 		trainClassifier(messageList);
@@ -33,19 +36,123 @@ public class MultinomialClassifier {
 		HashSet<String> words = new HashSet<String>();
 		words.addAll(mf.body.keySet());
 		words.addAll(mf.subject.keySet());
+		vocabulary.addAll(words);
 		
 		//Update stats with the new information
 		stats.addDoc();
-		stats.addNumWords(words.size());
 		for(String word : words) {
 			double num = mf.body.getCount(word) + mf.subject.getCount(word);
+			numWords += num;
 			for(int i = 0; i < num; i++) { stats.addWord(word); }
 		}
 		
 		//Update instance variables
 		numDocs++;
-		numWords += words.size();
 		classStatistics.put(klass, stats);
+	}
+	
+	public void upweightSubjects(ArrayList<MessageFeatures>[] messageList) {
+		for(int i = 0; i < messageList.length; i++) {
+			ArrayList<MessageFeatures> list = messageList[i];
+			for(MessageFeatures mf : list) {
+				int klass = mf.newsgroupNumber;
+				ClassStatistics stats = classStatistics.get(klass);
+				for(String word : mf.subject.keySet()) {
+					double num = mf.body.getCount(word) + mf.subject.getCount(word);
+					numWords += num;
+					for(int j = 0; j < num; j++) { stats.addWord(word); }					
+				}
+			}
+		}
+	}
+	
+	public void trainWCNB() {
+		for(Integer klass : classStatistics.keySet()) {
+			double sum = 0;
+			for(String word : vocabulary) {
+				sum += scoreCNBWord(klass, word);
+			}
+			wcnbValues.put(klass, sum);
+		}
+	}
+	
+	public double[] classifyWCNBFeature(MessageFeatures mf) {
+		int numClasses = classStatistics.size();
+		double[] scores = new double[numClasses];
+		
+		for(int klass = 0; klass < numClasses; klass++) {
+			scores[klass] = scoreWCNBFeature(klass, mf);
+		}
+		return scores;
+	}
+	
+	private double scoreWCNBFeature(int klass, MessageFeatures mf) {
+		HashSet<String> words = new HashSet<String>();
+		words.addAll(mf.body.keySet());
+		words.addAll(mf.subject.keySet());
+		
+		double score = 0;
+		for(String word : words) {
+			double count = mf.body.getCount(word) + mf.subject.getCount(word);
+			for(int i = 0; i < count; i++) {
+				score += scoreWCNBWord(klass, word);
+			}
+		}
+		return score;
+	}
+	
+	private double scoreWCNBWord(int klass, String word) {
+		double sum = Math.abs(wcnbValues.get(klass));
+		return scoreCNBWord(klass, word) / sum;
+		
+	}
+	
+	public double[] classifyTWCNBFeature(MessageFeatures mf) {
+		int numClasses = classStatistics.size();
+		double[] scores = new double[numClasses];
+		
+		for(int klass = 0; klass < numClasses; klass++) {
+			scores[klass] = scoreTWCNBFeature(klass, mf);
+		}
+		return scores;
+	}
+	
+	private double scoreTWCNBFeature(int klass, MessageFeatures mf) {
+		HashSet<String> words = new HashSet<String>();
+		words.addAll(mf.body.keySet());
+		words.addAll(mf.subject.keySet());
+		
+		double score = 0;
+		for(String word : words) {
+			double count = mf.body.getCount(word) + mf.subject.getCount(word);
+			for(int i = 0; i < count; i++) {
+				score += scoreTWCNBWord(klass, word);
+			}
+		}
+		return score;
+	}
+	
+	private double scoreTWCNBWord(int klass, String word) {
+		double sum = Math.abs(wcnbValues.get(klass));
+		double numOccurrencesWordInDocsOfOtherClass = 0;
+		double numOfWordsInDocsOfOtherClass = 0;
+		
+		for(Integer key : classStatistics.keySet()) {
+			if(key == klass) continue;
+			ClassStatistics stats = classStatistics.get(key);
+			numOccurrencesWordInDocsOfOtherClass += stats.getCount(word);
+			numOfWordsInDocsOfOtherClass += stats.numWords;
+		}
+		
+		double probabilityOfWordInClassNumerator = transform(numOccurrencesWordInDocsOfOtherClass) + ALPHA;
+		double probabilityOfWordInClassDenominator = transform(numOfWordsInDocsOfOtherClass) + this.numWords * ALPHA;
+		double probabilityOfWordInClass = probabilityOfWordInClassNumerator / probabilityOfWordInClassDenominator;
+		
+		return -1 * Math.log(probabilityOfWordInClass) / sum;
+	}
+	
+	private double transform(double freq) {
+		return Math.log(1 + freq);
 	}
 	
 	public double[] classifyCNBFeature(MessageFeatures mf) {
