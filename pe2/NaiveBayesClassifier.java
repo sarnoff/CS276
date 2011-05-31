@@ -137,15 +137,17 @@ public class NaiveBayesClassifier {
     public static Map<String,double[]> trainBinomial(ArrayList<MessageFeatures>[] messageList, Counter<String>[] counters, ArrayList<String>[] featureSet)
     {
         Map<String,double[]> freqs = new HashMap<String,double[]>();
-        int[] numTerms = new int[messageList.length];
+        //int[] numTerms = new int[messageList.length];
         int[] categoryDocs = new int[messageList.length];
         for(int i=0;i<messageList.length;i++)
         {
-            if(featureSet!=null)
+            /*
+             if(featureSet!=null)
                 numTerms[i] = featureSet[i].size();
             else
                 numTerms[i] = counters[i].size();
-            //System.out.println("num terms "+i+" "+numTerms[i]);
+             */
+            //System.err.println("num terms "+i+" "+numTerms[i]);
             categoryDocs[i] = messageList[i].size();
         }
         
@@ -166,7 +168,7 @@ public class NaiveBayesClassifier {
             double[] probs = new double[messageList.length];
             for(int i=0;i<messageList.length;i++)
             {
-                probs[i] = (counters[i].getCount(term)+1.0)/((double)categoryDocs[i]+numTerms[i]);
+                probs[i] = (counters[i].getCount(term)+1.0)/((double)categoryDocs[i]+vocab.size());//numTerms[i]);
                 freqs.put(term,probs);
             }
         }
@@ -213,18 +215,18 @@ public class NaiveBayesClassifier {
                   {
                       double count = mf.subject.getCount(term)+mf.body.getCount(term);
                       if(model.containsKey(term))
-                          probs[k]+=count*Math.log(model.get(term)[k]);
+                          probs[k]+=Math.log(model.get(term)[k]);
                   }
               }
               if(QUICK_PROB_CHECK)
-                  System.out.println(quickProbCheck(probs));
+                  System.err.println(quickProbCheck(probs));
               else
                   outputProbability(probs);
               numberRight+=(max(probs)==mf.newsgroupNumber)?1:0;
           }
       }
       if(DEBUG)
-          System.out.println("percent correctly id: "+numberRight/(MESSAGES_TO_CLASSIFY*messageList.length));
+          System.err.println("percent correctly id: "+numberRight/(MESSAGES_TO_CLASSIFY*messageList.length));
       return (numberRight * 100.0) /(MESSAGES_TO_CLASSIFY * messageList.length);
   }
     
@@ -447,9 +449,9 @@ public class NaiveBayesClassifier {
 			  double[] score = mc.classifyTWCNBFeature(mf);
 			  int mostLikelyNewsgroup = max(score);
 			  if(mostLikelyNewsgroup == klass) accurate++;
-//			  System.out.print(mostLikelyNewsgroup + "" + '\t');
+//			  System.err.print(mostLikelyNewsgroup + "" + '\t');
 		  }
-//		  System.out.print('\n');
+//		  System.err.print('\n');
 	  }	
 
 	  double per = accurate / (classified);
