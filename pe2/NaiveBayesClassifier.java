@@ -364,7 +364,7 @@ public class NaiveBayesClassifier {
 		  mc.trainWCNB();
 		  avg += classifyTWCNB(mc, folds.test);
 	  }
-	  System.err.println("Average accuracy: "+(avg/10) + "%");
+	  System.err.println("Average accuracy: "+(avg/K) + "%");
 	  System.err.println();
   }
   
@@ -376,9 +376,9 @@ public class NaiveBayesClassifier {
 		  MultinomialClassifier mc = new MultinomialClassifier(folds.train);
 		  avg += classifyMultinomial(mc, folds.test);
 	  }
-	  System.err.println("Average accuracy: "+(avg/10) + "%");
+	  System.err.println("Average accuracy: "+(avg/K) + "%");
 	  System.err.println();
-      return (avg/10);
+      return (avg/K);
   }
     
     public static double doKFoldFeatureMultinomial(MessageIterator mi) {
@@ -390,9 +390,9 @@ public class NaiveBayesClassifier {
             avg += classifyMultinomial(mc, folds.test);
         }
         
-        System.err.println("Average accuracy: "+(avg/10) + "%");
+        System.err.println("Average accuracy: "+(avg/K) + "%");
         System.err.println();
-        return (avg/10);
+        return (avg/K);
     }
   
     public static double doKFoldBinomial(MessageIterator mi) {
@@ -404,9 +404,9 @@ public class NaiveBayesClassifier {
             avg += classifyBinomial(folds.test, freqs);
         }
         
-        System.err.println("Average accuracy: "+(avg/10) + "%");
+        System.err.println("Average accuracy: "+(avg/K) + "%");
         System.err.println();
-        return (avg/10);
+        return (avg/K);
     }
     
     public static double doKFoldChi2(MessageIterator mi) {
@@ -420,9 +420,9 @@ public class NaiveBayesClassifier {
             avg += classifyBinomial(folds.test, freqs, featureSet);
         }
         
-        System.err.println("Average accuracy: "+(avg/10) + "%");
+        System.err.println("Average accuracy: "+(avg/K) + "%");
         System.err.println();
-        return (avg/10);
+        return (avg/K);
     }
   
   private static int max(double[] score) {
