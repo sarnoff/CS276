@@ -4,7 +4,7 @@ import cs224n.util.PriorityQueue;
 
 @SuppressWarnings("unchecked")
 public class NaiveBayesClassifier {
-	private static final int K = 10;
+	private static int K = 10;//changable for testing
     public static final int MESSAGES_TO_CLASSIFY = 20;
     public static final int FEATURES_PER_NEWSGROUP = 300;
     //should be false when turned in
@@ -368,7 +368,7 @@ public class NaiveBayesClassifier {
 	  System.err.println();
   }
   
-  public static void doKFoldMultinomial(MessageIterator mi) {
+  public static double doKFoldMultinomial(MessageIterator mi) {
 	  ArrayList<MessageFeatures> list = getMessages(mi);
 	  int avg = 0;
 	  for(int fold = 0; fold < K; fold++) {
@@ -378,9 +378,10 @@ public class NaiveBayesClassifier {
 	  }
 	  System.err.println("Average accuracy: "+(avg/10) + "%");
 	  System.err.println();
+      return (avg/10);
   }
     
-    public static void doKFoldFeatureMultinomial(MessageIterator mi) {
+    public static double doKFoldFeatureMultinomial(MessageIterator mi) {
         ArrayList<MessageFeatures> list = getMessages(mi);
         int avg = 0;
         for(int fold = 0; fold < K; fold++) {
@@ -391,9 +392,10 @@ public class NaiveBayesClassifier {
         
         System.err.println("Average accuracy: "+(avg/10) + "%");
         System.err.println();
+        return (avg/10);
     }
   
-    public static void doKFoldBinomial(MessageIterator mi) {
+    public static double doKFoldBinomial(MessageIterator mi) {
         ArrayList<MessageFeatures> list = getMessages(mi);
         int avg = 0;
         for(int fold = 0; fold < K; fold++) {
@@ -404,9 +406,10 @@ public class NaiveBayesClassifier {
         
         System.err.println("Average accuracy: "+(avg/10) + "%");
         System.err.println();
+        return (avg/10);
     }
     
-    public static void doKFoldChi2(MessageIterator mi) {
+    public static double doKFoldChi2(MessageIterator mi) {
         ArrayList<MessageFeatures> list = getMessages(mi);
         int avg = 0;
         for(int fold = 0; fold < K; fold++) {
@@ -419,6 +422,7 @@ public class NaiveBayesClassifier {
         
         System.err.println("Average accuracy: "+(avg/10) + "%");
         System.err.println();
+        return (avg/10);
     }
   
   private static int max(double[] score) {
@@ -475,6 +479,45 @@ public class NaiveBayesClassifier {
 	  }
 	  System.out.format( "%n" );
  }
+    
+    public static MessageIterator makeMI(String train)
+    {
+        MessageIterator mi = null;
+        try {
+            mi = new MessageIterator(train);
+        } catch (Exception e) {
+            System.err.println("Unable to create message iterator from file "+train);
+            e.printStackTrace();
+            System.exit(-1);
+        }
+        return mi;
+    }
+    
+    public static void doKFoldAll(String train)
+    {
+        int [] kValues = {2,3,4,5,10,20,30};
+        double [][] percents = new double [kValues.length][4];
+        for(int i = 0; i < kValues.length;i++)
+        {
+            K=kValues[i];
+            percents[i][0] = doKFoldBinomial(makeMI(train));
+            percents[i][1] = doKFoldChi2(makeMI(train));
+            percents[i][2] = doKFoldMultinomial(makeMI(train));
+            percents[i][3] = doKFoldFeatureMultinomial(makeMI(train));
+            System.err.println("\n\n\n\n\n"+K+"\n\n\n\n\n");
+        }
+        String s = "";
+        for(int i = 0; i < kValues.length; i++)
+        {
+            s+=kValues[i];
+            for(int j = 0; j<4;j++)
+            {
+                s+="\t"+(100-percents[i][j]);
+            }
+            s+="\n";
+        }
+        System.err.println("\n\n\n\n\n"+s);
+    }
   
   public static void main(String args[]) {
     if (args.length != 2) {
@@ -514,7 +557,10 @@ public class NaiveBayesClassifier {
     	doKFoldChi2(mi);
     } else if (mode.equals("upweighted")) {
     	doKFoldUpweighted(mi);
-    } else { 
+    } else if (mode.equals("kfold-test")) {
+    	doKFoldAll(train);
+    } 
+    else { 
       // Add other test cases that you want to run here.
       System.err.println("Unknown mode "+mode);
       System.exit(-1);
