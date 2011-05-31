@@ -322,9 +322,12 @@ public class NaiveBayesClassifier {
         }	
         
         double per = accurate / (numClasses * MESSAGES_TO_CLASSIFY);
-        //	  System.err.println("Accurate: "+accurate);
-        //	  System.err.println("Out of: "+(numClasses * MESSAGES_TO_CLASSIFY));
-        //	  System.err.println("Accuracy: "+(per * 100) + "%");
+        if(DEBUG)
+        {
+        	  System.err.println("Accurate: "+accurate);
+        	  System.err.println("Out of: "+(numClasses * MESSAGES_TO_CLASSIFY));
+        	  System.err.println("Accuracy: "+(per * 100) + "%");
+        }
         return per * 100;
     }
     
